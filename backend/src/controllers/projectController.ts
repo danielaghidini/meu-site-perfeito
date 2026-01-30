@@ -14,10 +14,10 @@ export const getAllProjects = async (req: Request, res: Response) => {
 };
 
 export const getProjectBySlug = async (req: Request, res: Response) => {
-	const { slug } = req.params;
+	const slug = req.params.slug as string;
 	try {
 		const project = await prisma.project.findUnique({
-			where: { slug },
+			where: { slug: slug },
 		});
 		if (!project) {
 			return res.status(404).json({ error: "Project not found" });
@@ -63,11 +63,11 @@ export const createProject = async (req: Request, res: Response) => {
 };
 
 export const updateProject = async (req: Request, res: Response) => {
-	const { id } = req.params;
+	const id = req.params.id as string;
 	const data = req.body;
 	try {
 		const project = await prisma.project.update({
-			where: { id },
+			where: { id: id },
 			data,
 		});
 		res.json(project);
@@ -78,10 +78,10 @@ export const updateProject = async (req: Request, res: Response) => {
 };
 
 export const deleteProject = async (req: Request, res: Response) => {
-	const { id } = req.params;
+	const id = req.params.id as string;
 	try {
 		await prisma.project.delete({
-			where: { id },
+			where: { id: id },
 		});
 		res.status(204).send();
 	} catch (error) {
