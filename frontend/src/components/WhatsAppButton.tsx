@@ -75,10 +75,6 @@ const WhatsAppButton = () => {
 								</p>
 							</div>
 
-							<p className="text-[10px] text-slate-500 text-center uppercase tracking-widest font-medium">
-								A mensagem será enviada pelo WhatsApp
-							</p>
-
 							<form
 								onSubmit={handleSendMessage}
 								className="space-y-3 pt-2"
@@ -108,7 +104,7 @@ const WhatsAppButton = () => {
 									disabled={!userMessage.trim()}
 									className="w-full bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 disabled:opacity-50 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#00E5FF]/20"
 								>
-									<Send className="w-4 h-4" />
+									<MessageCircle className="w-4 h-4 fill-current" />
 									Enviar no WhatsApp
 								</button>
 							</form>
