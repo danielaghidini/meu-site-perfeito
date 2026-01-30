@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Blog from "./pages/Blog";
 import SinglePost from "./pages/SinglePost";
 import ProjectDetails from "./pages/ProjectDetails";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
 import { AuthProvider } from "./contexts/AuthContext";
@@ -40,6 +41,10 @@ const App = () => (
 					<Route path="/blog" element={<Blog />} />
 					<Route path="/blog/:slug" element={<SinglePost />} />
 					<Route path="/project/:slug" element={<ProjectDetails />} />
+					<Route
+						path="/politica-de-privacidade"
+						element={<PrivacyPolicy />}
+					/>
 
 					{/* Painel Administrativo */}
 					<Route path="/painel/login" element={<AdminLogin />} />

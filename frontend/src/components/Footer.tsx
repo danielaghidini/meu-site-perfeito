@@ -22,7 +22,7 @@ const Footer = () => {
 						no Brasil.
 					</p>
 
-					<nav className="flex items-center gap-6">
+					<nav className="flex items-center justify-center flex-wrap gap-x-6 gap-y-2">
 						<a
 							href="#sobre"
 							className="text-muted-foreground hover:text-foreground transition-colors text-sm"
@@ -46,6 +46,12 @@ const Footer = () => {
 							className="text-muted-foreground hover:text-foreground transition-colors text-sm"
 						>
 							Blog
+						</a>
+						<a
+							href="/politica-de-privacidade"
+							className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+						>
+							Privacidade
 						</a>
 						<a
 							href="#contato"
