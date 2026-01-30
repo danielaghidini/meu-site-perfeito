@@ -316,6 +316,29 @@ export const apiDeleteUser = async (
 	if (!response.ok) throw new Error("Failed to delete user");
 };
 
-// Stub functions
 export const createPost = async (): Promise<Post | null> => null;
-export const uploadMedia = async (): Promise<number | null> => null;
+
+export const uploadImage = async (
+	file: File,
+	token: string,
+): Promise<string | null> => {
+	try {
+		const formData = new FormData();
+		formData.append("image", file);
+
+		const response = await fetch(`${API_URL}/api/upload`, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			body: formData,
+		});
+
+		if (!response.ok) throw new Error("Falha no upload");
+		const data = await response.json();
+		return data.url;
+	} catch (error) {
+		console.error("Erro no upload:", error);
+		return null;
+	}
+};

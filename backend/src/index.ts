@@ -31,6 +31,7 @@ import {
 	updateContactStatus,
 	deleteContact,
 } from "./controllers/contactController.js";
+import { upload } from "./middleware/upload.js";
 
 console.log("Starting server...");
 connectDB();
@@ -58,6 +59,18 @@ app.use((req, res, next) => {
 app.get("/api/health", (req, res) => {
 	res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
+
+app.post(
+	"/api/upload",
+	authenticateToken,
+	upload.single("image"),
+	(req, res) => {
+		if (!req.file) {
+			return res.status(400).json({ error: "No file uploaded" });
+		}
+		res.json({ url: (req.file as any).path });
+	},
+);
 
 // --- AUTH ---
 // app.post("/auth/register", register); // Desativado por segurança. Use o painel de usuários.

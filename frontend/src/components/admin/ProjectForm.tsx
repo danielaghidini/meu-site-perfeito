@@ -4,9 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { createProject, updateProject, Project } from "@/services/api";
+import {
+	createProject,
+	updateProject,
+	uploadImage,
+	Project,
+} from "@/services/api";
 import { useAuth } from "@/contexts/useAuth";
 import { toast } from "sonner";
+import { Upload, ImageIcon, Loader2 } from "lucide-react";
 
 interface ProjectFormProps {
 	project?: Project;
@@ -21,6 +27,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 }) => {
 	const { token } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
+	const [isUploading, setIsUploading] = useState(false);
 	const [formData, setFormData] = useState({
 		title: "",
 		slug: "",
@@ -76,6 +83,26 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
 	const handleCheckboxChange = (checked: boolean) => {
 		setFormData((prev) => ({ ...prev, isFeatured: checked }));
+	};
+
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file || !token) return;
+
+		setIsUploading(true);
+		try {
+			const url = await uploadImage(file, token);
+			if (url) {
+				setFormData((prev) => ({ ...prev, coverUrl: url }));
+				toast.success("Imagem carregada com sucesso!");
+			} else {
+				toast.error("Erro ao carregar imagem.");
+			}
+		} catch (error) {
+			toast.error("Erro no upload.");
+		} finally {
+			setIsUploading(false);
+		}
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -174,18 +201,70 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				<div className="space-y-2">
+				<div className="space-y-4">
 					<Label htmlFor="coverUrl" className="text-slate-400">
-						Link da Imagem de Capa
+						Imagem de Capa
 					</Label>
-					<Input
-						id="coverUrl"
-						name="coverUrl"
-						value={formData.coverUrl}
-						onChange={handleChange}
-						placeholder="https://imgur.com/..."
-						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] rounded-xl h-12"
-					/>
+					<div className="flex flex-col gap-4">
+						{formData.coverUrl && (
+							<div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 group">
+								<img
+									src={formData.coverUrl}
+									alt="Preview"
+									className="w-full h-full object-cover"
+								/>
+								<div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+									<p className="text-white text-xs font-medium">
+										Imagem Atual
+									</p>
+								</div>
+							</div>
+						)}
+						<div className="flex gap-2">
+							<div className="relative flex-grow">
+								<Input
+									id="coverUrl"
+									name="coverUrl"
+									value={formData.coverUrl}
+									onChange={handleChange}
+									placeholder="Cole o link ou use o botão ao lado"
+									className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] rounded-xl h-12 pr-12"
+								/>
+								<div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+									<ImageIcon className="w-5 h-5" />
+								</div>
+							</div>
+							<div className="relative">
+								<input
+									type="file"
+									id="file-upload"
+									className="hidden"
+									accept="image/*"
+									onChange={handleFileChange}
+									disabled={isUploading}
+								/>
+								<Button
+									type="button"
+									asChild
+									variant="outline"
+									className="h-12 border-white/10 bg-white/5 hover:bg-white/10 rounded-xl px-4 cursor-pointer"
+									disabled={isUploading}
+								>
+									<label
+										htmlFor="file-upload"
+										className="flex items-center gap-2"
+									>
+										{isUploading ? (
+											<Loader2 className="w-5 h-5 animate-spin" />
+										) : (
+											<Upload className="w-5 h-5" />
+										)}
+										{isUploading ? "Enviando..." : "Upload"}
+									</label>
+								</Button>
+							</div>
+						</div>
+					</div>
 				</div>
 				<div className="space-y-2">
 					<Label htmlFor="technologies" className="text-slate-400">
