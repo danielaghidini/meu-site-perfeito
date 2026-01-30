@@ -9,6 +9,7 @@ import { ArrowLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ReactMarkdown from "react-markdown";
+import SEO from "@/components/SEO";
 
 const SinglePost = () => {
 	const { slug } = useParams<{ slug: string }>();
@@ -79,6 +80,13 @@ const SinglePost = () => {
 
 	return (
 		<div className="min-h-screen flex flex-col">
+			<SEO
+				title={post.title}
+				description={post.excerpt}
+				ogImage={post.coverUrl || "/og-image.png"}
+				canonical={`/blog/${post.slug}`}
+				ogType="article"
+			/>
 			<Header />
 			<main className="flex-grow pt-24 pb-12">
 				<div className="container mx-auto px-4 max-w-4xl">
@@ -109,11 +117,11 @@ const SinglePost = () => {
 						</h1>
 					</header>
 
-					{post.cover && (
+					{post.coverUrl && (
 						<div className="rounded-xl overflow-hidden mb-10 shadow-lg aspect-video bg-muted">
 							<img
-								src={post.cover.url}
-								alt={post.cover.alternativeText || post.title}
+								src={post.coverUrl}
+								alt={post.title}
 								className="w-full h-full object-cover"
 							/>
 						</div>

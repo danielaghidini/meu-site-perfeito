@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SEO from "@/components/SEO";
 
 const Blog = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
@@ -28,6 +29,11 @@ const Blog = () => {
 
 	return (
 		<div className="min-h-screen flex flex-col">
+			<SEO
+				title="Blog & Novidades"
+				description="Explorando ideias, tecnologias e compartilhando conhecimento sobre desenvolvimento web e design."
+				canonical="/blog"
+			/>
 			<header className="py-6 container mx-auto px-4">
 				<Button
 					variant="ghost"

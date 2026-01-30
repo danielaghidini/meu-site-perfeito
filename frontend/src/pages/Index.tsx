@@ -6,10 +6,15 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import CookieConsent from "@/components/CookieConsent";
+import SEO from "@/components/SEO";
 
 const Index = () => {
 	return (
 		<div className="min-h-screen bg-background overflow-x-hidden">
+			<SEO
+				title="Criação de Sites Modernos e SEO"
+				description="Transformamos ideias em sites perfeitos. Desenvolvimento com React, Next.js e SEO otimizado para o seu negócio crescer."
+			/>
 			<Header />
 			<CookieConsent />
 			<main className="overflow-hidden">

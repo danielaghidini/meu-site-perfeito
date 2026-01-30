@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ExternalLink, Github } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import SEO from "@/components/SEO";
 
 const ProjectDetails = () => {
 	const { slug } = useParams<{ slug: string }>();
@@ -45,6 +46,12 @@ const ProjectDetails = () => {
 
 	return (
 		<div className="min-h-screen bg-[#0B0E14] text-white">
+			<SEO
+				title={project.title}
+				description={project.shortDescription || project.description}
+				ogImage={project.coverUrl || "/og-image.png"}
+				canonical={`/project/${project.slug}`}
+			/>
 			{/* Hero Header */}
 			<div className="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
 				{project.coverUrl && (
