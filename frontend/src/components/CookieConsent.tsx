@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cookie, X } from "lucide-react";
 import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
 
 const CookieConsent = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -45,8 +46,14 @@ const CookieConsent = () => {
 										conteúdo e anúncios, fornecer recursos
 										de redes sociais e analisar nosso
 										tráfego. Ao continuar navegando, você
-										concorda com a nossa política de
-										privacidade.
+										concorda com a nossa{" "}
+										<Link
+											to="/politica-de-privacidade"
+											className="text-primary hover:underline font-medium"
+										>
+											política de privacidade
+										</Link>
+										.
 									</p>
 								</div>
 							</div>
