@@ -14,6 +14,7 @@ import {
 	getMe,
 	updateProfile,
 	getAllUsers,
+	createUser,
 	updateUser,
 	deleteUser,
 } from "./controllers/authController.js";
@@ -66,6 +67,7 @@ app.put("/auth/profile", authenticateToken, updateProfile);
 
 // --- USER MANAGEMENT (ADMIN ONLY) ---
 app.get("/api/users", authenticateToken, authorizeRole(["ADMIN"]), getAllUsers);
+app.post("/api/users", authenticateToken, authorizeRole(["ADMIN"]), createUser);
 app.put(
 	"/api/users/:id",
 	authenticateToken,

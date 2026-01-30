@@ -3,6 +3,7 @@ import {
 	apiGetUsers,
 	apiUpdateUser,
 	apiDeleteUser,
+	apiCreateUser,
 	User,
 } from "@/services/api";
 import { useAuth } from "@/contexts/useAuth";
@@ -17,6 +18,8 @@ import {
 	Calendar,
 	User as UserIcon,
 	Pencil,
+	Plus,
+	Lock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -53,18 +56,41 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 const ManageUsers = () => {
 	const [users, setUsers] = useState<User[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [userToDelete, setUserToDelete] = useState<User | null>(null);
 	const [userToEdit, setUserToEdit] = useState<User | null>(null);
-	const [editFormData, setEditFormData] = useState({ name: "", email: "" });
+	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+
+	const [editFormData, setEditFormData] = useState({
+		name: "",
+		email: "",
+		role: "",
+	});
+	const [createFormData, setCreateFormData] = useState({
+		name: "",
+		email: "",
+		password: "",
+		role: "USER",
+	});
+
 	const {
 		token,
 		user: currentUser,
 		updateUser: updateGlobalUser,
 	} = useAuth();
+
+	// Permissão de administrador para ações sensíveis
+	const isAdmin = currentUser?.role === "ADMIN";
 
 	const fetchUsers = async () => {
 		if (!token) return;
@@ -83,12 +109,21 @@ const ManageUsers = () => {
 	}, [token]);
 
 	const handleRoleChange = async (userId: string, currentRole: string) => {
-		if (!token) return;
+		if (!token || !isAdmin) return;
 		const newRole = currentRole === "ADMIN" ? "USER" : "ADMIN";
 
 		try {
-			await apiUpdateUser(userId, { role: newRole }, token);
+			const updated = await apiUpdateUser(
+				userId,
+				{ role: newRole },
+				token,
+			);
 			toast.success(`Permissão atualizada para ${newRole}`);
+
+			if (userId === currentUser?.id) {
+				updateGlobalUser(updated);
+			}
+
 			fetchUsers();
 		} catch (error) {
 			toast.error("Erro ao atualizar permissão");
@@ -96,7 +131,7 @@ const ManageUsers = () => {
 	};
 
 	const handleDeleteUser = async () => {
-		if (!token || !userToDelete) return;
+		if (!token || !userToDelete || !isAdmin) return;
 
 		try {
 			await apiDeleteUser(userToDelete.id, token);
@@ -114,6 +149,7 @@ const ManageUsers = () => {
 		setEditFormData({
 			name: user.name || "",
 			email: user.email,
+			role: user.role,
 		});
 	};
 
@@ -129,7 +165,6 @@ const ManageUsers = () => {
 			);
 			toast.success("Usuário atualizado com sucesso");
 
-			// Se o usuário editado for o logado, atualiza o contexto global
 			if (userToEdit.id === currentUser?.id) {
 				updateGlobalUser(updatedUser);
 			}
@@ -141,9 +176,29 @@ const ManageUsers = () => {
 		}
 	};
 
+	const handleCreateUser = async (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!token || !isAdmin) return;
+
+		try {
+			await apiCreateUser(createFormData, token);
+			toast.success("Usuário criado com sucesso!");
+			fetchUsers();
+			setIsCreateDialogOpen(false);
+			setCreateFormData({
+				name: "",
+				email: "",
+				password: "",
+				role: "USER",
+			});
+		} catch (error: any) {
+			toast.error(error.message || "Erro ao criar usuário");
+		}
+	};
+
 	return (
 		<div className="space-y-8 font-inter">
-			<div className="flex justify-between items-center">
+			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 				<div>
 					<h1 className="text-4xl font-bold text-white font-sora tracking-tight">
 						Gerenciamento de Usuários
@@ -152,6 +207,15 @@ const ManageUsers = () => {
 						Controle quem tem acesso ao painel administrativo.
 					</p>
 				</div>
+				{isAdmin && (
+					<Button
+						onClick={() => setIsCreateDialogOpen(true)}
+						className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 text-white font-bold rounded-xl px-6 h-12 flex gap-2 items-center shadow-[0_0_20px_rgba(0,229,255,0.15)] transition-all"
+					>
+						<Plus size={20} />
+						Novo Usuário
+					</Button>
+				)}
 			</div>
 
 			{loading ? (
@@ -180,68 +244,77 @@ const ManageUsers = () => {
 										)}
 									</div>
 
-									<DropdownMenu>
-										<DropdownMenuTrigger asChild>
-											<Button
-												variant="ghost"
-												size="icon"
-												className="text-slate-400 hover:text-white hover:bg-white/5"
+									{/* Somente ADM pode modificar outros usuários */}
+									{(isAdmin ||
+										user.id === currentUser?.id) && (
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button
+													variant="ghost"
+													size="icon"
+													className="text-slate-400 hover:text-white hover:bg-white/5"
+												>
+													<MoreVertical size={20} />
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent
+												align="end"
+												className="bg-[#1A1F2C] border-white/10 text-white p-2 rounded-xl"
 											>
-												<MoreVertical size={20} />
-											</Button>
-										</DropdownMenuTrigger>
-										<DropdownMenuContent
-											align="end"
-											className="bg-[#1A1F2C] border-white/10 text-white p-2 rounded-xl"
-										>
-											<DropdownMenuItem
-												className="flex items-center gap-2 cursor-pointer focus:bg-white/5 rounded-lg py-3 px-4"
-												onClick={() =>
-													handleEditClick(user)
-												}
-											>
-												<Pencil
-													size={16}
-													className="text-[#00E5FF]"
-												/>
-												Editar Informações
-											</DropdownMenuItem>
+												<DropdownMenuItem
+													className="flex items-center gap-2 cursor-pointer focus:bg-white/5 rounded-lg py-3 px-4"
+													onClick={() =>
+														handleEditClick(user)
+													}
+												>
+													<Pencil
+														size={16}
+														className="text-[#00E5FF]"
+													/>
+													Editar Informações
+												</DropdownMenuItem>
 
-											{user.id !== currentUser?.id && (
-												<>
-													<DropdownMenuItem
-														className="flex items-center gap-2 cursor-pointer focus:bg-white/5 rounded-lg py-3 px-4"
-														onClick={() =>
-															handleRoleChange(
-																user.id,
-																user.role,
-															)
-														}
-													>
-														<Shield
-															size={16}
-															className="text-[#00E5FF]"
-														/>
-														Tornar{" "}
-														{user.role === "ADMIN"
-															? "Usuário"
-															: "Admin"}
-													</DropdownMenuItem>
-													<DropdownMenuItem
-														className="flex items-center gap-2 text-red-400 cursor-pointer focus:bg-red-500/10 focus:text-red-400 rounded-lg py-3 px-4"
-														onClick={() =>
-															setUserToDelete(
-																user,
-															)
-														}
-													>
-														<Trash2 size={16} />
-														Excluir Usuário
-													</DropdownMenuItem>
-												</>
-											)}
-										</DropdownMenuContent>
-									</DropdownMenu>
+												{isAdmin &&
+													user.id !==
+														currentUser?.id && (
+														<>
+															<DropdownMenuItem
+																className="flex items-center gap-2 cursor-pointer focus:bg-white/5 rounded-lg py-3 px-4"
+																onClick={() =>
+																	handleRoleChange(
+																		user.id,
+																		user.role,
+																	)
+																}
+															>
+																<Shield
+																	size={16}
+																	className="text-[#00E5FF]"
+																/>
+																Tornar{" "}
+																{user.role ===
+																"ADMIN"
+																	? "Usuário"
+																	: "Admin"}
+															</DropdownMenuItem>
+															<DropdownMenuItem
+																className="flex items-center gap-2 text-red-400 cursor-pointer focus:bg-red-500/10 focus:text-red-400 rounded-lg py-3 px-4"
+																onClick={() =>
+																	setUserToDelete(
+																		user,
+																	)
+																}
+															>
+																<Trash2
+																	size={16}
+																/>
+																Excluir Usuário
+															</DropdownMenuItem>
+														</>
+													)}
+											</DropdownMenuContent>
+										</DropdownMenu>
+									)}
 								</div>
 
 								<CardTitle className="mt-4 text-xl text-white font-sora truncate">
@@ -286,6 +359,124 @@ const ManageUsers = () => {
 					))}
 				</div>
 			)}
+
+			{/* Create User Dialog */}
+			<Dialog
+				open={isCreateDialogOpen}
+				onOpenChange={setIsCreateDialogOpen}
+			>
+				<DialogContent className="bg-[#14181F] border-white/10 text-white rounded-3xl max-w-md">
+					<DialogHeader>
+						<DialogTitle className="text-2xl font-sora">
+							Cadastrar Novo Usuário
+						</DialogTitle>
+						<DialogDescription className="text-slate-400">
+							O usuário poderá acessar o painel com as credenciais
+							abaixo.
+						</DialogDescription>
+					</DialogHeader>
+					<form
+						onSubmit={handleCreateUser}
+						className="space-y-4 py-4"
+					>
+						<div className="space-y-2">
+							<Label htmlFor="name">Nome Completo</Label>
+							<Input
+								id="name"
+								value={createFormData.name}
+								onChange={(e) =>
+									setCreateFormData({
+										...createFormData,
+										name: e.target.value,
+									})
+								}
+								className="bg-[#0B0E14] border-white/5 text-white h-12 rounded-xl"
+								placeholder="Ex: João Silva"
+							/>
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor="email">E-mail</Label>
+							<Input
+								id="email"
+								type="email"
+								required
+								value={createFormData.email}
+								onChange={(e) =>
+									setCreateFormData({
+										...createFormData,
+										email: e.target.value,
+									})
+								}
+								className="bg-[#0B0E14] border-white/5 text-white h-12 rounded-xl"
+								placeholder="exemplo@email.com"
+							/>
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor="password">Senha Temporária</Label>
+							<div className="relative">
+								<Input
+									id="password"
+									type="password"
+									required
+									value={createFormData.password}
+									onChange={(e) =>
+										setCreateFormData({
+											...createFormData,
+											password: e.target.value,
+										})
+									}
+									className="bg-[#0B0E14] border-white/5 text-white h-12 rounded-xl pl-10"
+									placeholder="••••••••"
+								/>
+								<Lock
+									size={16}
+									className="absolute left-3.5 top-4 text-slate-500"
+								/>
+							</div>
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor="role">Nível de Acesso</Label>
+							<Select
+								value={createFormData.role}
+								onValueChange={(val) =>
+									setCreateFormData({
+										...createFormData,
+										role: val,
+									})
+								}
+							>
+								<SelectTrigger className="bg-[#0B0E14] border-white/5 text-white h-12 rounded-xl">
+									<SelectValue placeholder="Selecione um cargo" />
+								</SelectTrigger>
+								<SelectContent className="bg-[#1A1F2C] border-white/10 text-white rounded-xl">
+									<SelectItem value="USER">
+										Usuário (Padrão)
+									</SelectItem>
+									<SelectItem value="ADMIN">
+										Administrador
+									</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+						<DialogFooter className="mt-8">
+							<Button
+								type="button"
+								variant="ghost"
+								onClick={() => setIsCreateDialogOpen(false)}
+								className="text-slate-400 hover:text-white"
+							>
+								Cancelar
+							</Button>
+							<Button
+								type="submit"
+								className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 text-white font-bold rounded-xl px-8"
+							>
+								Cadastrar Usuário
+							</Button>
+						</DialogFooter>
+					</form>
+				</DialogContent>
+			</Dialog>
 
 			{/* Edit User Dialog */}
 			<Dialog
@@ -337,6 +528,34 @@ const ManageUsers = () => {
 								required
 							/>
 						</div>
+						{isAdmin && userToEdit?.id !== currentUser?.id && (
+							<div className="space-y-2">
+								<Label htmlFor="edit-role">
+									Nível de Acesso
+								</Label>
+								<Select
+									value={editFormData.role}
+									onValueChange={(val) =>
+										setEditFormData({
+											...editFormData,
+											role: val,
+										})
+									}
+								>
+									<SelectTrigger className="bg-[#0B0E14] border-white/5 text-white h-12 rounded-xl">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent className="bg-[#1A1F2C] border-white/10 text-white rounded-xl">
+										<SelectItem value="USER">
+											Usuário (Padrão)
+										</SelectItem>
+										<SelectItem value="ADMIN">
+											Administrador
+										</SelectItem>
+									</SelectContent>
+								</Select>
+							</div>
+						)}
 						<DialogFooter className="mt-8">
 							<Button
 								type="button"

@@ -243,6 +243,25 @@ export const apiGetUsers = async (token: string): Promise<User[]> => {
 	return response.json();
 };
 
+export const apiCreateUser = async (
+	userData: Partial<User> & { password?: string },
+	token: string,
+): Promise<User> => {
+	const response = await fetch(`${API_BASE_URL}/users`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify(userData),
+	});
+	if (!response.ok) {
+		const error = await response.json();
+		throw new Error(error.error || "Failed to create user");
+	}
+	return response.json();
+};
+
 export const apiUpdateUser = async (
 	id: string,
 	userData: Partial<User>,

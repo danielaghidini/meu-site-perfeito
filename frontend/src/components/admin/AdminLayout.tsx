@@ -57,11 +57,15 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 			icon: <Mail size={20} />,
 			path: "/painel/contatos",
 		},
-		{
-			label: "Usuários",
-			icon: <Users size={20} />,
-			path: "/painel/usuarios",
-		},
+		...(user?.role === "ADMIN"
+			? [
+					{
+						label: "Usuários",
+						icon: <Users size={20} />,
+						path: "/painel/usuarios",
+					},
+				]
+			: []),
 	];
 
 	return (
