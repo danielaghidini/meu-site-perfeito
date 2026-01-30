@@ -65,7 +65,7 @@ const ManageProjects = () => {
 				</div>
 				<Button
 					onClick={() => setIsFormOpen(true)}
-					className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 text-[#0B0E14] font-bold gap-2 h-12 px-8 rounded-2xl transition-all shadow-[0_0_25px_rgba(0,229,255,0.15)]"
+					className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 text-white font-bold gap-2 h-12 px-8 rounded-2xl transition-all shadow-[0_0_25px_rgba(0,229,255,0.15)]"
 				>
 					<Plus size={20} />
 					Novo Projeto

@@ -19,7 +19,7 @@ const Footer = () => {
 					<p className="text-muted-foreground text-sm flex items-center gap-1">
 						© {currentYear} Meu Site Perfeito. Feito com{" "}
 						<Heart className="w-4 h-4 text-primary fill-primary" />{" "}
-						em São Paulo.
+						no Brasil.
 					</p>
 
 					<nav className="flex items-center gap-6">
@@ -40,6 +40,12 @@ const Footer = () => {
 							className="text-muted-foreground hover:text-foreground transition-colors text-sm"
 						>
 							Projetos
+						</a>
+						<a
+							href="/blog"
+							className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+						>
+							Blog
 						</a>
 						<a
 							href="#contato"

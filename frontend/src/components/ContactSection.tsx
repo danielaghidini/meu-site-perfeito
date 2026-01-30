@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { sendContact } from "@/services/api";
 
 const ContactSection = () => {
 	const ref = useRef(null);
@@ -17,16 +18,33 @@ const ContactSection = () => {
 		e.preventDefault();
 		setIsSubmitting(true);
 
-		// Simulate form submission
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		const formData = new FormData(e.currentTarget);
+		const data = {
+			name: formData.get("name") as string,
+			email: formData.get("email") as string,
+			phone: formData.get("phone") as string,
+			company: formData.get("company") as string,
+			project: formData.get("project") as string,
+			message: formData.get("message") as string,
+		};
 
-		toast({
-			title: "Mensagem enviada!",
-			description: "Entraremos em contato em até 24 horas.",
-		});
-
-		setIsSubmitting(false);
-		(e.target as HTMLFormElement).reset();
+		try {
+			await sendContact(data);
+			toast({
+				title: "Mensagem enviada!",
+				description: "Entraremos em contato em até 24 horas.",
+			});
+			(e.target as HTMLFormElement).reset();
+		} catch (error) {
+			toast({
+				title: "Erro ao enviar",
+				description:
+					"Ocorreu um problema, tente novamente em instantes.",
+				variant: "destructive",
+			});
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	return (
@@ -162,6 +180,7 @@ const ContactSection = () => {
 									</label>
 									<Input
 										id="name"
+										name="name"
 										placeholder="Seu nome"
 										required
 										className="bg-secondary/30 border-border/50 focus:border-primary"
@@ -176,6 +195,7 @@ const ContactSection = () => {
 									</label>
 									<Input
 										id="email"
+										name="email"
 										type="email"
 										placeholder="seu@email.com"
 										required
@@ -194,6 +214,7 @@ const ContactSection = () => {
 									</label>
 									<Input
 										id="phone"
+										name="phone"
 										placeholder="(11) 99999-9999"
 										className="bg-secondary/30 border-border/50 focus:border-primary"
 									/>
@@ -207,6 +228,7 @@ const ContactSection = () => {
 									</label>
 									<Input
 										id="company"
+										name="company"
 										placeholder="Nome da empresa"
 										className="bg-secondary/30 border-border/50 focus:border-primary"
 									/>
@@ -222,6 +244,7 @@ const ContactSection = () => {
 								</label>
 								<Input
 									id="project"
+									name="project"
 									placeholder="Ex: Site institucional, E-commerce, Blog..."
 									required
 									className="bg-secondary/30 border-border/50 focus:border-primary"
@@ -237,6 +260,7 @@ const ContactSection = () => {
 								</label>
 								<Textarea
 									id="message"
+									name="message"
 									placeholder="Conte mais sobre seu projeto..."
 									rows={4}
 									required

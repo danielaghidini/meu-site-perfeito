@@ -227,7 +227,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 				<Button
 					type="submit"
 					disabled={isLoading}
-					className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] text-[#0B0E14] font-bold px-8 rounded-xl shadow-[0_0_20px_rgba(0,229,255,0.2)]"
+					className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] text-white font-bold px-8 rounded-xl shadow-[0_0_20px_rgba(0,229,255,0.2)]"
 				>
 					{isLoading ? "Salvando..." : "Criar Projeto"}
 				</Button>

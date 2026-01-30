@@ -61,6 +61,18 @@ model User {
   // Outras relações mantidas para compatibilidade se quiser usar depois, ou simplificamos
 }
 
+model Contact {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  project   String
+  message   String
+  status    String   @default("NEW") // NEW, READ, ARCHIVED
+  createdAt DateTime @default(now())
+}
+
 model AccessLog {
   id        String   @id @default(uuid())
   path      String

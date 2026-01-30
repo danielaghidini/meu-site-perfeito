@@ -21,6 +21,12 @@ import {
 	updateProject,
 	deleteProject,
 } from "./controllers/projectController.js";
+import {
+	createContact,
+	getAllContacts,
+	updateContactStatus,
+	deleteContact,
+} from "./controllers/contactController.js";
 
 console.log("Starting server...");
 connectDB();
@@ -157,6 +163,27 @@ app.delete(
 	authenticateToken,
 	authorizeRole(["ADMIN"]),
 	deleteProject,
+);
+
+// --- CONTACTS ---
+app.post("/api/contacts", createContact);
+app.get(
+	"/api/contacts",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	getAllContacts,
+);
+app.put(
+	"/api/contacts/:id",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	updateContactStatus,
+);
+app.delete(
+	"/api/contacts/:id",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	deleteContact,
 );
 
 app.listen(port, () => {

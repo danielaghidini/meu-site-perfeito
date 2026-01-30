@@ -57,7 +57,7 @@ const AdminLogin = () => {
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-[#0B0E14] p-4 font-outfit">
 			<Card className="w-full max-w-md shadow-2xl border border-white/5 bg-[#14181F] backdrop-blur-xl rounded-3xl overflow-hidden">
-				<div className="h-1.5 bg-gradient-to-r from-[#00E5FF] via-[#7B61FF] to-[#FF00E5]" />
+				<div className="h-1 bg-gradient-to-r from-[#00E5FF] to-[#7B61FF]" />
 				<CardHeader className="space-y-4 text-center pt-12">
 					<div className="flex justify-center mb-2">
 						<img
@@ -100,7 +100,7 @@ const AdminLogin = () => {
 						</div>
 						<Button
 							type="submit"
-							className="w-full h-12 bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 text-[#0B0E14] font-bold text-lg rounded-xl shadow-[0_0_20px_rgba(0,229,255,0.2)] transition-all"
+							className="w-full h-12 bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 text-white font-bold text-lg rounded-xl shadow-[0_0_20px_rgba(0,229,255,0.2)] transition-all"
 							disabled={isLoading}
 						>
 							{isLoading ? "Entrando..." : "Entrar no Painel"}

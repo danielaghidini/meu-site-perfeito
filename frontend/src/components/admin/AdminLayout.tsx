@@ -8,6 +8,7 @@ import {
 	Briefcase,
 	LogOut,
 	Globe,
+	Mail,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
@@ -50,6 +51,11 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 			icon: <Briefcase size={20} />,
 			path: "/painel/projetos",
 		},
+		{
+			label: "Contatos",
+			icon: <Mail size={20} />,
+			path: "/painel/contatos",
+		},
 	];
 
 	return (
@@ -67,7 +73,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 							to={item.path}
 							className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${
 								location.pathname === item.path
-									? "bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] text-[#0B0E14] font-bold shadow-[0_0_20px_rgba(0,229,255,0.15)]"
+									? "bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] text-white font-bold shadow-[0_0_20px_rgba(0,229,255,0.15)]"
 									: "text-slate-400 hover:bg-white/5 hover:text-white"
 							}`}
 						>

@@ -162,6 +162,67 @@ export const deleteProject = async (
 	}
 };
 
+// --- CONTACTS ---
+export interface Contact {
+	id: string;
+	name: string;
+	email: string;
+	phone?: string;
+	company?: string;
+	project: string;
+	message: string;
+	status: "NEW" | "READ" | "ARCHIVED";
+	createdAt: string;
+}
+
+export const sendContact = async (
+	data: Omit<Contact, "id" | "status" | "createdAt">,
+): Promise<Contact> => {
+	const response = await fetch(`${API_BASE_URL}/contacts`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(data),
+	});
+	if (!response.ok) throw new Error("Failed to send message");
+	return response.json();
+};
+
+export const getContacts = async (token: string): Promise<Contact[]> => {
+	const response = await fetch(`${API_BASE_URL}/contacts`, {
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	if (!response.ok) throw new Error("Failed to fetch messages");
+	return response.json();
+};
+
+export const updateContactStatus = async (
+	id: string,
+	status: Contact["status"],
+	token: string,
+): Promise<Contact> => {
+	const response = await fetch(`${API_BASE_URL}/contacts/${id}`, {
+		method: "PUT",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify({ status }),
+	});
+	if (!response.ok) throw new Error("Failed to update message status");
+	return response.json();
+};
+
+export const apiDeleteContact = async (
+	id: string,
+	token: string,
+): Promise<void> => {
+	const response = await fetch(`${API_BASE_URL}/contacts/${id}`, {
+		method: "DELETE",
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	if (!response.ok) throw new Error("Failed to delete message");
+};
+
 // Stub functions
 export const createPost = async (): Promise<Post | null> => null;
 export const uploadMedia = async (): Promise<number | null> => null;
