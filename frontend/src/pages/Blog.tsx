@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { getPosts, Post } from "@/services/api";
 import PostCard from "@/components/PostCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Blog = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
@@ -26,8 +28,21 @@ const Blog = () => {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<Header />
-			<main className="flex-grow pt-24 pb-12">
+			<header className="py-6 container mx-auto px-4">
+				<Button
+					variant="ghost"
+					asChild
+					className="pl-0 hover:pl-2 transition-all hover:bg-transparent"
+				>
+					<Link
+						to="/"
+						className="flex items-center gap-2 text-muted-foreground hover:text-primary"
+					>
+						<ArrowLeft className="w-5 h-5" /> Voltar para o início
+					</Link>
+				</Button>
+			</header>
+			<main className="flex-grow pb-12">
 				<div className="container mx-auto px-4">
 					<div className="text-center mb-16">
 						<span className="text-primary font-medium text-sm tracking-wider uppercase">
