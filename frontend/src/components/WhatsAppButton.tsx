@@ -39,8 +39,12 @@ const WhatsAppButton = () => {
 						<div className="bg-gradient-to-r from-[#25D366] to-[#128C7E] p-4 text-white">
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-3">
-									<div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-										<User className="w-6 h-6" />
+									<div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white/20">
+										<img
+											src="/images/daniela.jpg"
+											alt="Daniela Ghidini"
+											className="w-full h-full object-cover"
+										/>
 									</div>
 									<div>
 										<p className="font-bold text-sm">
@@ -71,6 +75,10 @@ const WhatsAppButton = () => {
 								</p>
 							</div>
 
+							<p className="text-[10px] text-slate-500 text-center uppercase tracking-widest font-medium">
+								A mensagem será enviada pelo WhatsApp
+							</p>
+
 							<form
 								onSubmit={handleSendMessage}
 								className="space-y-3 pt-2"
@@ -98,10 +106,10 @@ const WhatsAppButton = () => {
 								<button
 									type="submit"
 									disabled={!userMessage.trim()}
-									className="w-full bg-[#25D366] hover:bg-[#20ba59] disabled:opacity-50 disabled:hover:bg-[#25D366] text-slate-900 font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-500/20"
+									className="w-full bg-[#25D366] hover:bg-[#20ba59] disabled:opacity-50 disabled:hover:bg-[#25D366] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-500/20"
 								>
 									<Send className="w-4 h-4" />
-									Iniciar Conversa
+									Enviar no WhatsApp
 								</button>
 							</form>
 						</div>
