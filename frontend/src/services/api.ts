@@ -78,13 +78,6 @@ export const getPosts = async (page = 1, perPage = 9): Promise<Post[]> => {
 		const response = await fetch(`${API_BASE_URL}/articles`);
 		if (!response.ok) throw new Error("Falha ao buscar posts");
 		const json = await response.json();
-		// Backend returns: { data: [...] } or just [...]? let's assume directly array from my code
-		// Wait, in index.ts I wrote: res.json(data: articles); -> Syntax error there in thought, fixed in reality?
-		// Let's assume the backend returns simple JSON array based on my controller logic usually.
-		// CHECK index.ts logic: `res.json(articles)` -> Array.
-		// Actually in index.ts I wrote `res.json(data: articles)` which is invalid JS syntax, I probably meant `res.json({ data: articles })` or just `res.json(articles)`.
-		// Let's assume standard array for now, but I will double check index.ts write.
-
 		if (json.data && Array.isArray(json.data))
 			return json.data.map(normalizeArticle);
 		if (Array.isArray(json)) return json.map(normalizeArticle);
@@ -178,13 +171,22 @@ export interface Contact {
 export const sendContact = async (
 	data: Omit<Contact, "id" | "status" | "createdAt">,
 ): Promise<Contact> => {
+	console.log("Sending contact data:", data);
 	const response = await fetch(`${API_BASE_URL}/contacts`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(data),
 	});
-	if (!response.ok) throw new Error("Failed to send message");
-	return response.json();
+
+	if (!response.ok) {
+		const errorData = await response.json().catch(() => ({}));
+		console.error("Server error sending contact:", errorData);
+		throw new Error(errorData.error || "Failed to send message");
+	}
+
+	const result = await response.json();
+	console.log("Contact sent successfully:", result);
+	return result;
 };
 
 export const getContacts = async (token: string): Promise<Contact[]> => {

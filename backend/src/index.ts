@@ -132,7 +132,7 @@ app.post(
 					categoryId,
 					coverUrl,
 					isFeatured,
-					authorId: req.user.userId,
+					authorId: req.user.id,
 				},
 			});
 			res.status(201).json(article);
