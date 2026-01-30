@@ -1,19 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { createProject } from "@/services/api";
+import { createProject, updateProject, Project } from "@/services/api";
 import { useAuth } from "@/contexts/useAuth";
 import { toast } from "sonner";
 
 interface ProjectFormProps {
+	project?: Project;
 	onSuccess: () => void;
 	onCancel: () => void;
 }
 
-const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
+const ProjectForm: React.FC<ProjectFormProps> = ({
+	project,
+	onSuccess,
+	onCancel,
+}) => {
 	const { token } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
 	const [formData, setFormData] = useState({
@@ -27,6 +32,22 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 		repoUrl: "",
 		isFeatured: false,
 	});
+
+	useEffect(() => {
+		if (project) {
+			setFormData({
+				title: project.title || "",
+				slug: project.slug || "",
+				shortDescription: project.shortDescription || "",
+				description: project.description || "",
+				coverUrl: project.coverUrl || "",
+				technologies: project.technologies || "",
+				liveUrl: project.liveUrl || "",
+				repoUrl: project.repoUrl || "",
+				isFeatured: project.isFeatured || false,
+			});
+		}
+	}, [project]);
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -63,12 +84,22 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 
 		setIsLoading(true);
 		try {
-			const result = await createProject(formData, token);
-			if (result) {
-				toast.success("Projeto criado com sucesso!");
-				onSuccess();
+			if (project) {
+				const result = await updateProject(project.id, formData, token);
+				if (result) {
+					toast.success("Projeto atualizado com sucesso!");
+					onSuccess();
+				} else {
+					throw new Error("Falha ao atualizar projeto");
+				}
 			} else {
-				throw new Error("Falha ao criar projeto");
+				const result = await createProject(formData, token);
+				if (result) {
+					toast.success("Projeto criado com sucesso!");
+					onSuccess();
+				} else {
+					throw new Error("Falha ao criar projeto");
+				}
 			}
 		} catch (error) {
 			toast.error("Erro ao salvar o projeto. Verifique os dados.");
@@ -94,7 +125,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 						onChange={handleChange}
 						placeholder="Ex: E-commerce Moderno"
 						required
-						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF]"
+						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] rounded-xl h-12"
 					/>
 				</div>
 				<div className="space-y-2">
@@ -108,7 +139,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 						onChange={handleChange}
 						placeholder="ex-ecommerce-moderno"
 						required
-						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF]"
+						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] rounded-xl h-12"
 					/>
 				</div>
 			</div>
@@ -123,7 +154,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 					value={formData.shortDescription}
 					onChange={handleChange}
 					placeholder="Uma frase rápida sobre o projeto"
-					className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF]"
+					className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] rounded-xl h-12"
 				/>
 			</div>
 
@@ -137,7 +168,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 					value={formData.description}
 					onChange={handleChange}
 					placeholder="Conte mais sobre os desafios e soluções deste projeto..."
-					className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] min-h-[120px]"
+					className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] min-h-[120px] rounded-xl"
 					required
 				/>
 			</div>
@@ -153,7 +184,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 						value={formData.coverUrl}
 						onChange={handleChange}
 						placeholder="https://imgur.com/..."
-						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF]"
+						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] rounded-xl h-12"
 					/>
 				</div>
 				<div className="space-y-2">
@@ -166,7 +197,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 						value={formData.technologies}
 						onChange={handleChange}
 						placeholder="React, Tailwind, Node.js"
-						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF]"
+						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] rounded-xl h-12"
 					/>
 				</div>
 			</div>
@@ -182,7 +213,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 						value={formData.liveUrl}
 						onChange={handleChange}
 						placeholder="https://..."
-						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF]"
+						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] rounded-xl h-12"
 					/>
 				</div>
 				<div className="space-y-2">
@@ -195,7 +226,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 						value={formData.repoUrl}
 						onChange={handleChange}
 						placeholder="https://github.com/..."
-						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF]"
+						className="bg-[#0B0E14] border-white/5 focus:ring-[#00E5FF] rounded-xl h-12"
 					/>
 				</div>
 			</div>
@@ -215,21 +246,25 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSuccess, onCancel }) => {
 				</Label>
 			</div>
 
-			<div className="flex justify-end gap-4 pt-6">
+			<div className="flex justify-end gap-4 pt-6 text-slate-300">
 				<Button
 					variant="ghost"
 					type="button"
 					onClick={onCancel}
-					className="text-slate-400 hover:text-white hover:bg-white/5"
+					className="text-slate-400 hover:text-white hover:bg-white/5 rounded-xl h-12 px-6"
 				>
 					Cancelar
 				</Button>
 				<Button
 					type="submit"
 					disabled={isLoading}
-					className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] text-white font-bold px-8 rounded-xl shadow-[0_0_20px_rgba(0,229,255,0.2)]"
+					className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] text-white font-bold px-10 rounded-xl h-12 shadow-[0_0_20px_rgba(0,229,255,0.2)]"
 				>
-					{isLoading ? "Salvando..." : "Criar Projeto"}
+					{isLoading
+						? "Salvando..."
+						: project
+							? "Salvar Alterações"
+							: "Criar Projeto"}
 				</Button>
 			</div>
 		</form>

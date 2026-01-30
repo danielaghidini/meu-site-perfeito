@@ -16,7 +16,7 @@ interface PostCardProps {
 }
 
 const PostCard = ({ post }: PostCardProps) => {
-	const featuredImage = post.cover?.url;
+	const featuredImage = post.coverUrl;
 
 	// Format date safely
 	const formattedDate = post.publishedAt

@@ -1,39 +1,31 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const projects = [
-	{
-		title: "E-commerce Moderno",
-		description:
-			"Loja virtual completa com React e integração ao WordPress como CMS Headless. Sistema de pagamentos, carrinho e gestão de produtos.",
-		image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop",
-		tags: ["React", "WordPress API", "Stripe", "SEO"],
-		liveUrl: "#",
-	},
-	{
-		title: "Portal de Notícias",
-		description:
-			"Site de conteúdo com painel administrativo personalizado. Gerenciamento de artigos, categorias e autores com SEO avançado.",
-		image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=600&fit=crop",
-		tags: ["Next.js", "Painel Custom", "PostgreSQL"],
-		liveUrl: "#",
-	},
-	{
-		title: "Site Institucional",
-		description:
-			"Presença digital profissional para empresa de consultoria. Design elegante, formulários de contato e integração com CRM.",
-		image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
-		tags: ["React", "Tailwind", "Strapi CMS"],
-		liveUrl: "#",
-	},
-];
+import { getProjects, Project } from "@/services/api";
 
 const ProjectsSection = () => {
+	const [projects, setProjects] = useState<Project[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 	const ref = useRef(null);
 	const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+	useEffect(() => {
+		const fetchProjects = async () => {
+			try {
+				const data = await getProjects();
+				// No backend, podemos filtrar apenas os destacados se quisermos
+				setProjects(data);
+			} catch (error) {
+				console.error("Erro ao carregar projetos:", error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchProjects();
+	}, []);
 
 	return (
 		<section id="projetos" className="py-20 md:py-24 relative" ref={ref}>
@@ -65,64 +57,89 @@ const ProjectsSection = () => {
 					</motion.div>
 
 					<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-						{projects.map((project, index) => (
-							<motion.article
-								key={project.title}
-								initial={{ opacity: 0, y: 50 }}
-								animate={isInView ? { opacity: 1, y: 0 } : {}}
-								transition={{
-									duration: 0.6,
-									delay: 0.2 + index * 0.1,
-								}}
-								className="group bg-gradient-card rounded-2xl overflow-hidden border border-border/50 hover:border-primary/30 transition-all duration-500"
-							>
-								<div className="relative overflow-hidden">
-									<img
-										src={project.image}
-										alt={project.title}
-										className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
-									/>
-									<div className="absolute inset-0 bg-gradient-to-t from-card to-transparent opacity-60" />
-								</div>
-
-								<div className="p-6 space-y-4">
-									<h3 className="font-display text-xl font-semibold group-hover:text-primary transition-colors duration-300">
-										{project.title}
-									</h3>
-									<p className="text-muted-foreground text-sm leading-relaxed">
-										{project.description}
-									</p>
-
-									<div className="flex flex-wrap gap-2">
-										{project.tags.map((tag) => (
-											<span
-												key={tag}
-												className="px-3 py-1 bg-secondary/50 rounded-full text-xs font-medium"
-											>
-												{tag}
-											</span>
-										))}
+						{isLoading ? (
+							[1, 2, 3].map((i) => (
+								<div
+									key={i}
+									className="h-96 bg-card/50 rounded-2xl animate-pulse border border-border/50"
+								/>
+							))
+						) : projects.length === 0 ? (
+							<div className="col-span-full text-center py-20 text-muted-foreground">
+								Nenhum projeto encontrado.
+							</div>
+						) : (
+							projects.map((project, index) => (
+								<motion.article
+									key={project.id}
+									initial={{ opacity: 0, y: 50 }}
+									animate={
+										isInView ? { opacity: 1, y: 0 } : {}
+									}
+									transition={{
+										duration: 0.6,
+										delay: 0.2 + index * 0.1,
+									}}
+									className="group bg-gradient-card rounded-2xl overflow-hidden border border-border/50 hover:border-primary/30 transition-all duration-500"
+								>
+									<div className="relative overflow-hidden">
+										{project.coverUrl ? (
+											<img
+												src={project.coverUrl}
+												alt={project.title}
+												className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+											/>
+										) : (
+											<div className="w-full h-48 bg-slate-800 flex items-center justify-center text-slate-500">
+												Sem Capa
+											</div>
+										)}
+										<div className="absolute inset-0 bg-gradient-to-t from-card to-transparent opacity-60" />
 									</div>
 
-									<div className="flex gap-3 pt-2">
-										<Button
-											variant="outline"
-											size="sm"
-											asChild
-										>
-											<a
-												href={project.liveUrl}
-												target="_blank"
-												rel="noopener noreferrer"
+									<div className="p-6 space-y-4">
+										<h3 className="font-display text-xl font-semibold group-hover:text-primary transition-colors duration-300">
+											{project.title}
+										</h3>
+										<p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
+											{project.shortDescription}
+										</p>
+
+										<div className="flex flex-wrap gap-2">
+											{project.technologies
+												?.split(",")
+												.map((tag) => (
+													<span
+														key={tag.trim()}
+														className="px-3 py-1 bg-secondary/50 rounded-full text-xs font-medium"
+													>
+														{tag.trim()}
+													</span>
+												))}
+										</div>
+
+										<div className="flex gap-3 pt-2">
+											<Button
+												variant="outline"
+												size="sm"
+												asChild
 											>
-												<ExternalLink className="w-4 h-4" />
-												Ver Projeto
-											</a>
-										</Button>
+												<a
+													href={
+														project.liveUrl || "#"
+													}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													<ExternalLink className="w-4 h-4" />
+													Ver Projeto
+												</a>
+											</Button>
+										</div>
 									</div>
-								</div>
-							</motion.article>
-						))}
+								</motion.article>
+							))
+						)}
 					</div>
 
 					<motion.div

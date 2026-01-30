@@ -113,10 +113,10 @@ const ContactSection = () => {
 											WhatsApp
 										</p>
 										<a
-											href="https://wa.me/5511999999999"
+											href="https://wa.me/5511995019783"
 											className="font-medium hover:text-primary transition-colors"
 										>
-											(11) 99999-9999
+											(11) 99501-9783
 										</a>
 									</div>
 								</div>

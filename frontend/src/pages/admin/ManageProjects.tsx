@@ -18,6 +18,9 @@ const ManageProjects = () => {
 	const [projects, setProjects] = useState<Project[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isFormOpen, setIsFormOpen] = useState(false);
+	const [projectToEdit, setProjectToEdit] = useState<Project | undefined>(
+		undefined,
+	);
 	const { token } = useAuth();
 
 	useEffect(() => {
@@ -52,6 +55,11 @@ const ManageProjects = () => {
 		}
 	};
 
+	const handleEditProject = (project: Project) => {
+		setProjectToEdit(project);
+		setIsFormOpen(true);
+	};
+
 	return (
 		<div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700 font-inter">
 			<div className="flex justify-between items-center">
@@ -64,7 +72,10 @@ const ManageProjects = () => {
 					</p>
 				</div>
 				<Button
-					onClick={() => setIsFormOpen(true)}
+					onClick={() => {
+						setProjectToEdit(undefined);
+						setIsFormOpen(true);
+					}}
 					className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 text-white font-bold gap-2 h-12 px-8 rounded-2xl transition-all shadow-[0_0_25px_rgba(0,229,255,0.15)]"
 				>
 					<Plus size={20} />
@@ -72,23 +83,35 @@ const ManageProjects = () => {
 				</Button>
 			</div>
 
-			<Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+			<Dialog
+				open={isFormOpen}
+				onOpenChange={(open) => {
+					setIsFormOpen(open);
+					if (!open) setProjectToEdit(undefined);
+				}}
+			>
 				<DialogContent className="max-w-3xl bg-[#14181F] border-white/5 text-white rounded-3xl p-8 overflow-y-auto max-h-[90vh]">
 					<DialogHeader>
 						<DialogTitle className="text-3xl font-bold font-sora">
-							Novo Projeto
+							{projectToEdit ? "Editar Projeto" : "Novo Projeto"}
 						</DialogTitle>
 						<DialogDescription className="text-slate-400">
-							Preencha os detalhes do projeto para adicioná-lo ao
-							portfólio.
+							{projectToEdit
+								? "Atualize os detalhes do projeto."
+								: "Preencha os detalhes do projeto para adicioná-lo ao portfólio."}
 						</DialogDescription>
 					</DialogHeader>
 					<ProjectForm
+						project={projectToEdit}
 						onSuccess={() => {
 							setIsFormOpen(false);
+							setProjectToEdit(undefined);
 							loadProjects();
 						}}
-						onCancel={() => setIsFormOpen(false)}
+						onCancel={() => {
+							setIsFormOpen(false);
+							setProjectToEdit(undefined);
+						}}
 					/>
 				</DialogContent>
 			</Dialog>
@@ -122,7 +145,7 @@ const ManageProjects = () => {
 					{projects.map((proj) => (
 						<Card
 							key={proj.id}
-							className="overflow-hidden border border-white/5 bg-[#14181F] group hover:shadow-[0_0_30px_rgba(0,0,0,0.3)] transition-all duration-500 rounded-2xl shadow-xl"
+							className="overflow-hidden border border-white/5 bg-[#14181F] group hover:border-[#00E5FF]/20 transition-all duration-500 rounded-2xl shadow-xl"
 						>
 							<div className="aspect-video relative overflow-hidden bg-slate-800">
 								{proj.coverUrl ? (
@@ -140,14 +163,18 @@ const ManageProjects = () => {
 									<Button
 										size="icon"
 										variant="secondary"
-										className="rounded-full h-12 w-12 bg-white text-[#0B0E14] hover:bg-[#00E5FF] transition-colors"
+										onClick={() => handleEditProject(proj)}
+										className="rounded-full h-12 w-12 bg-white text-[#0B0E14] hover:bg-[#00E5FF] transition-colors shadow-lg"
 									>
 										<Edit size={20} />
 									</Button>
 									<Button
 										size="icon"
 										variant="destructive"
-										className="rounded-full h-12 w-12 bg-red-500 hover:bg-red-600 transition-colors"
+										onClick={() =>
+											handleDeleteProject(proj.id)
+										}
+										className="rounded-full h-12 w-12 bg-red-500 hover:bg-red-600 transition-colors shadow-lg"
 									>
 										<Trash2 size={20} />
 									</Button>
@@ -166,7 +193,7 @@ const ManageProjects = () => {
 										.map((tech) => (
 											<span
 												key={tech}
-												className="text-[10px] bg-white/5 border border-white/5 px-2.5 py-1 rounded-md uppercase font-black tracking-widest text-[#00E5FF]/80 shadow-sm"
+												className="text-[10px] bg-white/5 border border-white/10 px-2.5 py-1 rounded-md uppercase font-black tracking-widest text-[#00E5FF]/80"
 											>
 												{tech.trim()}
 											</span>
