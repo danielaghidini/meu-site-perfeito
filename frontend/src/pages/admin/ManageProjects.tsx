@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Trash2, Edit, ExternalLink } from "lucide-react";
-import { getProjects, Project } from "@/services/api";
+import { Plus, Trash2, Edit } from "lucide-react";
+import { getProjects, Project, deleteProject } from "@/services/api";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogDescription,
+} from "@/components/ui/dialog";
+import ProjectForm from "@/components/admin/ProjectForm";
 
 const ManageProjects = () => {
 	const [projects, setProjects] = useState<Project[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isFormOpen, setIsFormOpen] = useState(false);
+	const { token } = useAuth();
 
 	useEffect(() => {
 		loadProjects();
@@ -25,22 +36,62 @@ const ManageProjects = () => {
 		}
 	};
 
+	const handleDeleteProject = async (id: string) => {
+		if (
+			!window.confirm("Tem certeza que deseja excluir este projeto?") ||
+			!token
+		)
+			return;
+
+		const success = await deleteProject(id, token);
+		if (success) {
+			toast.success("Projeto excluído!");
+			loadProjects();
+		} else {
+			toast.error("Erro ao excluir projeto");
+		}
+	};
+
 	return (
 		<div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700 font-inter">
 			<div className="flex justify-between items-center">
 				<div>
 					<h1 className="text-4xl font-bold text-white font-sora tracking-tight">
-						Meus Projetos
+						Meu Portfólio
 					</h1>
 					<p className="text-slate-400 text-lg mt-2">
-						Gerencie os projetos que aparecem no seu portfólio.
+						Gerencie os projetos que aparecem no seu site.
 					</p>
 				</div>
-				<Button className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 text-[#0B0E14] font-bold gap-2 h-12 px-8 rounded-2xl transition-all shadow-[0_0_25px_rgba(0,229,255,0.15)]">
+				<Button
+					onClick={() => setIsFormOpen(true)}
+					className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 text-[#0B0E14] font-bold gap-2 h-12 px-8 rounded-2xl transition-all shadow-[0_0_25px_rgba(0,229,255,0.15)]"
+				>
 					<Plus size={20} />
 					Novo Projeto
 				</Button>
 			</div>
+
+			<Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+				<DialogContent className="max-w-3xl bg-[#14181F] border-white/5 text-white rounded-3xl p-8 overflow-y-auto max-h-[90vh]">
+					<DialogHeader>
+						<DialogTitle className="text-3xl font-bold font-sora">
+							Novo Projeto
+						</DialogTitle>
+						<DialogDescription className="text-slate-400">
+							Preencha os detalhes do projeto para adicioná-lo ao
+							portfólio.
+						</DialogDescription>
+					</DialogHeader>
+					<ProjectForm
+						onSuccess={() => {
+							setIsFormOpen(false);
+							loadProjects();
+						}}
+						onCancel={() => setIsFormOpen(false)}
+					/>
+				</DialogContent>
+			</Dialog>
 
 			{isLoading ? (
 				<div className="py-24 text-center text-slate-500 font-medium">

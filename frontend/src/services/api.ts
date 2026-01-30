@@ -112,6 +112,46 @@ export const getProjects = async (): Promise<Project[]> => {
 	}
 };
 
+export const createProject = async (
+	projectData: any,
+	token: string,
+): Promise<Project | null> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/projects`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify(projectData),
+		});
+		if (!response.ok) throw new Error("Falha ao criar projeto");
+		const json = await response.json();
+		return normalizeProject(json);
+	} catch (error) {
+		console.error("Erro ao criar projeto:", error);
+		return null;
+	}
+};
+
+export const deleteProject = async (
+	id: string,
+	token: string,
+): Promise<boolean> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
+			method: "DELETE",
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.ok;
+	} catch (error) {
+		console.error("Erro ao deletar projeto:", error);
+		return false;
+	}
+};
+
 // Stub functions
 export const createPost = async (): Promise<Post | null> => null;
 export const uploadMedia = async (): Promise<number | null> => null;
