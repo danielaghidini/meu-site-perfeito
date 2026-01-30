@@ -42,7 +42,17 @@ const getImageUrl = (url?: string) => {
 };
 
 // Adapter to convert custom backend "Article" to frontend "Post"
-const normalizeArticle = (item: any): Post => {
+const normalizeArticle = (item: {
+	id: string;
+	title: string;
+	slug: string;
+	content: string;
+	excerpt: string;
+	coverUrl?: string;
+	category?: { name: string };
+	createdAt: string;
+	user?: { name: string; avatar?: string };
+}): Post => {
 	return {
 		id: item.id,
 		title: item.title,
@@ -56,7 +66,7 @@ const normalizeArticle = (item: any): Post => {
 	};
 };
 
-const normalizeProject = (item: any): Project => {
+const normalizeProject = (item: Project): Project => {
 	return {
 		...item,
 		coverUrl: item.coverUrl,
@@ -113,7 +123,7 @@ export const getProjects = async (): Promise<Project[]> => {
 };
 
 export const createProject = async (
-	projectData: any,
+	projectData: Partial<Project>,
 	token: string,
 ): Promise<Project | null> => {
 	try {

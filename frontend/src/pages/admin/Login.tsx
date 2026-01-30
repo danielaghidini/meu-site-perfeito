@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,8 +43,12 @@ const AdminLogin = () => {
 			login(data.token, data.user);
 			toast.success("Bem-vindo ao seu painel!");
 			navigate("/painel");
-		} catch (error: any) {
-			toast.error(error.message);
+		} catch (error: unknown) {
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: "Ocorreu um erro inesperado";
+			toast.error(errorMessage);
 		} finally {
 			setIsLoading(false);
 		}

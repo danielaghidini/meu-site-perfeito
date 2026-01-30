@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Trash2, Edit } from "lucide-react";
 import { getProjects, Project, deleteProject } from "@/services/api";
 import { toast } from "sonner";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import {
 	Dialog,
 	DialogContent,
