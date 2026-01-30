@@ -112,7 +112,11 @@ const Header = () => {
 					className="md:hidden"
 					onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
 				>
-					{isMobileMenuOpen ? <X /> : <Menu />}
+					{isMobileMenuOpen ? (
+						<X className="w-8 h-8" />
+					) : (
+						<Menu className="w-8 h-8" />
+					)}
 				</Button>
 			</div>
 
