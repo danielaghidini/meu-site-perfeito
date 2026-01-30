@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id           String   @id @default(uuid())
+  title        String
+  slug         String   @unique
+  content      String
+  excerpt      String?
+  coverUrl     String?  // Adicionado capa
+  isFeatured   Boolean  @default(false)
+  authorId     String?
+  published    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  categoryId   String?
+  user         User?    @relation(fields: [authorId], references: [id])
+  category     Category? @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  articles    Article[]
+}
+
+model Project {
+  id               String   @id @default(uuid())
+  title            String
+  slug             String   @unique
+  description      String
+  shortDescription String?
+  coverUrl         String?
+  technologies     String?  // Ex: "React, Node"
+  liveUrl          String?
+  repoUrl          String?
+  isFeatured       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// User e outros models auxiliares
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  name      String?
+  avatar    String?
+  role      String    @default("USER")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  articles  Article[]
+  // Outras relações mantidas para compatibilidade se quiser usar depois, ou simplificamos
+}
+
+model AccessLog {
+  id        String   @id @default(uuid())
+  path      String
+  method    String
+  referer   String?
+  userId    String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}

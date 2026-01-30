@@ -1,43 +1,45 @@
 {
-  "name": "backend",
-  "version": "0.1.0",
-  "private": true,
-  "description": "A Strapi application",
-  "scripts": {
-    "build": "strapi build",
-    "console": "strapi console",
-    "deploy": "strapi deploy",
-    "dev": "strapi develop",
-    "develop": "strapi develop",
-    "start": "strapi start",
-    "strapi": "strapi",
-    "upgrade": "npx @strapi/upgrade latest",
-    "upgrade:dry": "npx @strapi/upgrade latest --dry"
-  },
-  "dependencies": {
-    "@strapi/plugin-cloud": "5.34.0",
-    "@strapi/plugin-users-permissions": "5.34.0",
-    "@strapi/provider-upload-cloudinary": "^5.34.0",
-    "@strapi/strapi": "5.34.0",
-    "better-sqlite3": "12.4.1",
-    "pg": "^8.17.2",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-router-dom": "^6.0.0",
-    "styled-components": "^6.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "typescript": "^5"
-  },
-  "engines": {
-    "node": ">=20.0.0 <=24.x.x",
-    "npm": ">=6.0.0"
-  },
-  "strapi": {
-    "uuid": "86d7566c-b6d9-4c47-bd39-327248f724ca",
-    "installId": "e633bb844cbdcdc98db0426ca29474a4a7d0cb616277be7d2538595bc631af50"
-  }
+	"name": "backend",
+	"version": "1.0.0",
+	"engines": {
+		"node": ">=20"
+	},
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "tsx watch src/index.ts",
+		"import-dialogues": "node src/scripts/importDialogues.js",
+		"build": "tsc",
+		"db:sync": "tsx src/scripts/sync-db.ts",
+		"start": "npx prisma db push && node dist/src/index.js",
+		"seed": "tsx prisma/seed.ts",
+		"postinstall": "prisma generate"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "module",
+	"dependencies": {
+		"@prisma/client": "^5.22.0",
+		"@types/bcryptjs": "^2.4.6",
+		"@types/jsonwebtoken": "^9.0.10",
+		"bcryptjs": "^3.0.3",
+		"cors": "^2.8.6",
+		"dotenv": "^17.2.3",
+		"express": "^5.2.1",
+		"jsonwebtoken": "^9.0.3",
+		"node-fetch": "^3.3.2",
+		"pg": "^8.17.2",
+		"prisma": "^5.22.0"
+	},
+	"devDependencies": {
+		"@types/cors": "^2.8.19",
+		"@types/express": "^5.0.6",
+		"@types/node": "^25.0.10",
+		"@types/pg": "^8.16.0",
+		"nodemon": "^3.1.11",
+		"ts-node": "^10.9.2",
+		"tsx": "^4.21.0",
+		"typescript": "^5.9.3"
+	}
 }
