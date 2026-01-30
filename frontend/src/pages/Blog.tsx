@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
-import { getPosts, WordPressPost } from '@/services/api';
-import PostCard from '@/components/PostCard';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useEffect, useState } from "react";
+import { getPosts, Post } from "@/services/api";
+import PostCard from "@/components/PostCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const Blog = () => {
-	const [posts, setPosts] = useState<WordPressPost[]>([]);
+	const [posts, setPosts] = useState<Post[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -13,7 +15,7 @@ const Blog = () => {
 				const data = await getPosts();
 				setPosts(data);
 			} catch (error) {
-				console.error('Failed to load posts', error);
+				console.error("Failed to load posts", error);
 			} finally {
 				setLoading(false);
 			}
@@ -23,26 +25,53 @@ const Blog = () => {
 	}, []);
 
 	return (
-		<div className="container mx-auto px-4 py-12">
-			<h1 className="text-4xl font-bold mb-8 text-center">Blog</h1>
+		<div className="min-h-screen flex flex-col">
+			<Header />
+			<main className="flex-grow pt-24 pb-12">
+				<div className="container mx-auto px-4">
+					<div className="text-center mb-16">
+						<span className="text-primary font-medium text-sm tracking-wider uppercase">
+							Nosso Conteúdo
+						</span>
+						<h1 className="font-display text-4xl md:text-5xl font-bold mt-4">
+							Blog &{" "}
+							<span className="text-gradient">Novidades</span>
+						</h1>
+					</div>
+					<p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+						Explorando ideias, tecnologias e compartilhando
+						conhecimento sobre desenvolvimento web e design.
+					</p>
 
-			{loading ? (
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{[1, 2, 3, 4, 5, 6].map((i) => (
-						<div key={i} className="flex flex-col space-y-3">
-							<Skeleton className="h-[200px] w-full rounded-xl" />
-							<Skeleton className="h-4 w-[250px]" />
-							<Skeleton className="h-4 w-[200px]" />
+					{loading ? (
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+							{[1, 2, 3, 4, 5, 6].map((i) => (
+								<div
+									key={i}
+									className="flex flex-col space-y-3"
+								>
+									<Skeleton className="h-[200px] w-full rounded-xl" />
+									<Skeleton className="h-4 w-[250px]" />
+									<Skeleton className="h-4 w-[200px]" />
+								</div>
+							))}
 						</div>
-					))}
+					) : posts.length > 0 ? (
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+							{posts.map((post) => (
+								<PostCard key={post.id} post={post} />
+							))}
+						</div>
+					) : (
+						<div className="text-center py-20">
+							<p className="text-xl text-muted-foreground">
+								Em breve novos posts por aqui!
+							</p>
+						</div>
+					)}
 				</div>
-			) : (
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{posts.map((post) => (
-						<PostCard key={post.id} post={post} />
-					))}
-				</div>
-			)}
+			</main>
+			<Footer />
 		</div>
 	);
 };

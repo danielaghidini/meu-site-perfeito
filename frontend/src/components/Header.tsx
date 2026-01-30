@@ -3,17 +3,20 @@ import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
+import { Link, useLocation } from "react-router-dom";
 
 const navLinks = [
-	{ href: "#sobre", label: "Sobre" },
-	{ href: "#servicos", label: "Serviços" },
-	{ href: "#projetos", label: "Projetos" },
-	{ href: "#contato", label: "Contato" },
+	{ href: "/#sobre", label: "Sobre" },
+	{ href: "/#servicos", label: "Serviços" },
+	{ href: "/#projetos", label: "Projetos" },
+	{ href: "/blog", label: "Blog" },
+	{ href: "/#contato", label: "Contato" },
 ];
 
 const Header = () => {
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const location = useLocation();
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -22,6 +25,44 @@ const Header = () => {
 		window.addEventListener("scroll", handleScroll);
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
+
+	// Helper to handle navigation logic
+	const NavItem = ({
+		href,
+		label,
+		className,
+		onClick,
+	}: {
+		href: string;
+		label: string;
+		className?: string;
+		onClick?: () => void;
+	}) => {
+		const isHome = location.pathname === "/";
+		const isAnchor = href.startsWith("/#");
+
+		// If it's an anchor link and we are on home: use plain anchor href="#target"
+		// If it's an anchor link and not on home: use Link to="/#target" (handled by simple href string)
+		// If it's a route (like /blog): use Link to="/blog"
+
+		if (isAnchor && isHome) {
+			return (
+				<a
+					href={href.replace("/", "")}
+					className={className}
+					onClick={onClick}
+				>
+					{label}
+				</a>
+			);
+		}
+
+		return (
+			<Link to={href} className={className} onClick={onClick}>
+				{label}
+			</Link>
+		);
+	};
 
 	return (
 		<motion.header
@@ -33,27 +74,34 @@ const Header = () => {
 			}`}
 		>
 			<div className="container mx-auto px-6 flex items-center justify-between">
-				<a href="#" className="flex items-center">
+				<Link to="/" className="flex items-center">
 					<img
 						src={logo}
 						alt="Meu Site Perfeito"
 						className="h-12 md:h-16"
 					/>
-				</a>
+				</Link>
 
 				{/* Desktop Navigation */}
 				<nav className="hidden md:flex items-center gap-8">
 					{navLinks.map((link) => (
-						<a
+						<NavItem
 							key={link.href}
 							href={link.href}
+							label={link.label}
 							className="text-muted-foreground hover:text-foreground transition-colors duration-300 text-base font-medium"
-						>
-							{link.label}
-						</a>
+						/>
 					))}
 					<Button variant="hero" size="lg" asChild>
-						<a href="#contato">Solicitar Orçamento</a>
+						<a
+							href={
+								location.pathname === "/"
+									? "#contato"
+									: "/#contato"
+							}
+						>
+							Solicitar Orçamento
+						</a>
 					</Button>
 				</nav>
 
@@ -77,14 +125,13 @@ const Header = () => {
 				>
 					<div className="flex flex-col gap-4">
 						{navLinks.map((link) => (
-							<a
+							<NavItem
 								key={link.href}
 								href={link.href}
+								label={link.label}
 								onClick={() => setIsMobileMenuOpen(false)}
 								className="text-muted-foreground hover:text-foreground transition-colors duration-300 text-lg font-medium py-2"
-							>
-								{link.label}
-							</a>
+							/>
 						))}
 						<Button
 							variant="hero"
@@ -92,7 +139,15 @@ const Header = () => {
 							className="mt-2"
 							asChild
 						>
-							<a href="#contato">Solicitar Orçamento</a>
+							<a
+								href={
+									location.pathname === "/"
+										? "#contato"
+										: "/#contato"
+								}
+							>
+								Solicitar Orçamento
+							</a>
 						</Button>
 					</div>
 				</motion.nav>
