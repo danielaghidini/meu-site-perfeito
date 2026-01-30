@@ -110,8 +110,12 @@
 	}
 
 	body {
-		@apply bg-background text-foreground font-sans antialiased;
+		@apply bg-background text-foreground font-sans antialiased overflow-x-hidden;
 		font-family: "Inter", sans-serif;
+	}
+
+	html {
+		@apply overflow-x-hidden;
 	}
 
 	h1,

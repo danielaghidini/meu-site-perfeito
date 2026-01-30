@@ -81,8 +81,8 @@ const ContactSection = () => {
 					<div className="grid lg:grid-cols-2 gap-16">
 						{/* Contact Info */}
 						<motion.div
-							initial={{ opacity: 0, x: -50 }}
-							animate={isInView ? { opacity: 1, x: 0 } : {}}
+							initial={{ opacity: 0, y: 30 }}
+							animate={isInView ? { opacity: 1, y: 0 } : {}}
 							transition={{ duration: 0.6, delay: 0.2 }}
 							className="space-y-8"
 						>
@@ -97,7 +97,7 @@ const ContactSection = () => {
 										</p>
 										<a
 											href="mailto:contato@meusiteperfeito.com.br"
-											className="font-medium hover:text-primary transition-colors"
+											className="font-medium hover:text-primary transition-colors break-all"
 										>
 											contato@meusiteperfeito.com.br
 										</a>
@@ -114,7 +114,7 @@ const ContactSection = () => {
 										</p>
 										<a
 											href="https://wa.me/5511995019783"
-											className="font-medium hover:text-primary transition-colors"
+											className="font-medium hover:text-primary transition-colors break-words"
 										>
 											(11) 99501-9783
 										</a>
@@ -164,8 +164,8 @@ const ContactSection = () => {
 
 						{/* Contact Form */}
 						<motion.form
-							initial={{ opacity: 0, x: 50 }}
-							animate={isInView ? { opacity: 1, x: 0 } : {}}
+							initial={{ opacity: 0, y: 30 }}
+							animate={isInView ? { opacity: 1, y: 0 } : {}}
 							transition={{ duration: 0.6, delay: 0.4 }}
 							onSubmit={handleSubmit}
 							className="space-y-6"
@@ -272,7 +272,7 @@ const ContactSection = () => {
 								type="submit"
 								variant="hero"
 								size="lg"
-								className="w-full"
+								className="w-full whitespace-normal h-auto py-4"
 								disabled={isSubmitting}
 							>
 								{isSubmitting ? (

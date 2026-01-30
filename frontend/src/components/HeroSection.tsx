@@ -6,14 +6,14 @@ const HeroSection = () => {
 	return (
 		<section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
 			{/* Background Effects */}
-			<div className="absolute inset-0 overflow-hidden">
+			<div className="absolute inset-0 overflow-hidden pointer-events-none">
 				<div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse-glow" />
 				<div
 					className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/15 rounded-full blur-3xl animate-pulse-glow"
 					style={{ animationDelay: "1.5s" }}
 				/>
-				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-border/20 rounded-full" />
-				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-border/10 rounded-full" />
+				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full md:w-[600px] aspect-square border border-border/20 rounded-full opacity-20 md:opacity-100" />
+				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full md:w-[800px] aspect-square border border-border/10 rounded-full opacity-10 md:opacity-100" />
 			</div>
 
 			<div className="container mx-auto px-6 relative z-10">
@@ -57,10 +57,20 @@ const HeroSection = () => {
 						transition={{ duration: 0.6, delay: 0.3 }}
 						className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
 					>
-						<Button variant="hero" size="xl" asChild>
+						<Button
+							variant="hero"
+							size="xl"
+							asChild
+							className="whitespace-normal h-auto py-4 px-8 min-w-[200px]"
+						>
 							<a href="#contato">Solicitar Orçamento</a>
 						</Button>
-						<Button variant="hero-outline" size="xl" asChild>
+						<Button
+							variant="hero-outline"
+							size="xl"
+							asChild
+							className="whitespace-normal h-auto py-4 px-8 min-w-[200px]"
+						>
 							<a href="#projetos">Ver Projetos</a>
 						</Button>
 					</motion.div>

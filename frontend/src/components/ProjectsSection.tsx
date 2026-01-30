@@ -108,7 +108,7 @@ const ProjectsSection = () => {
 											</p>
 										</div>
 
-										<p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
+										<p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap break-words">
 											{project.description}
 										</p>
 
