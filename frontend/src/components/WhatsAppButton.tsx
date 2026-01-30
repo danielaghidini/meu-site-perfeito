@@ -13,7 +13,7 @@ const WhatsAppButton = () => {
 		if (!userMessage.trim()) return;
 
 		const message = encodeURIComponent(userMessage);
-		const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+		const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${message}`;
 		window.open(whatsappUrl, "_blank");
 		setUserMessage("");
 		setIsOpen(false);
