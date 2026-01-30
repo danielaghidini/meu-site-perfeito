@@ -31,7 +31,7 @@ const WhatsAppButton = () => {
 	};
 
 	return (
-		<div className="hidden md:flex fixed bottom-4 right-4 z-50 flex-col items-end">
+		<div className="flex fixed bottom-4 right-4 z-50 flex-col items-end">
 			<AnimatePresence>
 				{isOpen && (
 					<motion.div
