@@ -36,7 +36,7 @@ const WhatsAppButton = () => {
 						className="mb-4 w-80 sm:w-96 bg-[#14181F] border border-white/10 rounded-3xl shadow-2xl overflow-hidden font-outfit"
 					>
 						{/* Header */}
-						<div className="bg-gradient-to-r from-[#25D366] to-[#128C7E] p-4 text-white">
+						<div className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] p-4 text-white">
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-3">
 									<div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white/20">
@@ -91,7 +91,7 @@ const WhatsAppButton = () => {
 											setUserMessage(e.target.value)
 										}
 										placeholder="Digite sua mensagem..."
-										className="w-full bg-[#14181F] border border-white/10 rounded-2xl p-4 text-sm text-white placeholder:text-slate-600 focus:ring-2 focus:ring-[#25D366] focus:border-transparent outline-none resize-none transition-all h-24"
+										className="w-full bg-[#14181F] border border-white/10 rounded-2xl p-4 text-sm text-white placeholder:text-slate-600 focus:ring-2 focus:ring-[#00E5FF] focus:border-transparent outline-none resize-none transition-all h-24"
 										onKeyDown={(e) => {
 											if (
 												e.key === "Enter" &&
@@ -106,7 +106,7 @@ const WhatsAppButton = () => {
 								<button
 									type="submit"
 									disabled={!userMessage.trim()}
-									className="w-full bg-[#25D366] hover:bg-[#20ba59] disabled:opacity-50 disabled:hover:bg-[#25D366] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-500/20"
+									className="w-full bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] hover:opacity-90 disabled:opacity-50 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#00E5FF]/20"
 								>
 									<Send className="w-4 h-4" />
 									Enviar no WhatsApp
@@ -141,7 +141,7 @@ const WhatsAppButton = () => {
 					{/* Tooltip (only when closed) */}
 					{!isOpen && (
 						<span className="absolute right-full mr-4 px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-white/10 shadow-xl">
-							Fale comigo!
+							Fale por WhatsApp!
 						</span>
 					)}
 				</button>
