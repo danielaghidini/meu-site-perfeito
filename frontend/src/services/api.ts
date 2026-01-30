@@ -34,13 +34,14 @@ export interface Project {
 	createdAt: string;
 }
 
-const API_BASE_URL = "http://localhost:1337/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:1337";
+const API_BASE_URL = `${API_URL}/api`;
 
 // Helper to extract clean URL for images
 const getImageUrl = (url?: string) => {
 	if (!url) return null;
 	if (url.startsWith("http")) return url;
-	return `http://localhost:1337${url}`;
+	return `${API_URL}${url}`;
 };
 
 // Helper to normalize Strapi v5 response
