@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import WhatsAppButton from "./components/WhatsAppButton";
 import Index from "./pages/Index";
 import Blog from "./pages/Blog";
 import SinglePost from "./pages/SinglePost";
@@ -16,6 +17,12 @@ import ManageProjects from "./pages/admin/ManageProjects";
 import ManageContacts from "./pages/admin/ManageContacts";
 import ManageUsers from "./pages/admin/ManageUsers";
 
+const ConditionalWhatsAppButton = () => {
+	const location = useLocation();
+	const isAdminPage = location.pathname.startsWith("/painel");
+	return !isAdminPage ? <WhatsAppButton /> : null;
+};
+
 const App = () => (
 	<AuthProvider>
 		<TooltipProvider>
@@ -27,6 +34,7 @@ const App = () => (
 					v7_relativeSplatPath: true,
 				}}
 			>
+				<ConditionalWhatsAppButton />
 				<Routes>
 					<Route path="/" element={<Index />} />
 					<Route path="/blog" element={<Blog />} />
