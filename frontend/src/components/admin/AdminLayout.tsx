@@ -9,6 +9,7 @@ import {
 	LogOut,
 	Globe,
 	Mail,
+	Users,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
@@ -55,6 +56,11 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 			label: "Contatos",
 			icon: <Mail size={20} />,
 			path: "/painel/contatos",
+		},
+		{
+			label: "Usuários",
+			icon: <Users size={20} />,
+			path: "/painel/usuarios",
 		},
 	];
 

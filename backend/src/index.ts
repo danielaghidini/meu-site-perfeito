@@ -13,6 +13,9 @@ import {
 	register,
 	getMe,
 	updateProfile,
+	getAllUsers,
+	updateUser,
+	deleteUser,
 } from "./controllers/authController.js";
 import {
 	getAllProjects,
@@ -60,6 +63,21 @@ app.post("/auth/register", register);
 app.post("/auth/login", login);
 app.get("/auth/me", authenticateToken, getMe);
 app.put("/auth/profile", authenticateToken, updateProfile);
+
+// --- USER MANAGEMENT (ADMIN ONLY) ---
+app.get("/api/users", authenticateToken, authorizeRole(["ADMIN"]), getAllUsers);
+app.put(
+	"/api/users/:id",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	updateUser,
+);
+app.delete(
+	"/api/users/:id",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	deleteUser,
+);
 
 // --- BLOG (ARTICLES) ---
 app.get("/api/articles", async (req, res) => {

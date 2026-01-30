@@ -32,6 +32,15 @@ export interface Project {
 	createdAt: string;
 }
 
+export interface User {
+	id: string;
+	email: string;
+	name: string | null;
+	avatar: string | null;
+	role: string;
+	createdAt: string;
+}
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001"; // Default custom backend port
 const API_BASE_URL = `${API_URL}/api`;
 
@@ -223,6 +232,46 @@ export const apiDeleteContact = async (
 		headers: { Authorization: `Bearer ${token}` },
 	});
 	if (!response.ok) throw new Error("Failed to delete message");
+};
+
+// --- USERS ---
+export const apiGetUsers = async (token: string): Promise<User[]> => {
+	const response = await fetch(`${API_BASE_URL}/users`, {
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	if (!response.ok) throw new Error("Failed to fetch users");
+	return response.json();
+};
+
+export const apiUpdateUser = async (
+	id: string,
+	userData: Partial<User>,
+	token: string,
+): Promise<User> => {
+	const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+		method: "PUT",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify(userData),
+	});
+	if (!response.ok) {
+		const error = await response.json();
+		throw new Error(error.error || "Failed to update user");
+	}
+	return response.json();
+};
+
+export const apiDeleteUser = async (
+	id: string,
+	token: string,
+): Promise<void> => {
+	const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+		method: "DELETE",
+		headers: { Authorization: `Bearer ${token}` },
+	});
+	if (!response.ok) throw new Error("Failed to delete user");
 };
 
 // Stub functions

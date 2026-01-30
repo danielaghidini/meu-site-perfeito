@@ -188,3 +188,103 @@ export const updateProfile = async (req: Request, res: Response) => {
 		res.status(500).json({ error: "Error updating profile" });
 	}
 };
+export const getAllUsers = async (req: Request, res: Response) => {
+	try {
+		const users = await prisma.user.findMany({
+			select: {
+				id: true,
+				email: true,
+				name: true,
+				avatar: true,
+				role: true,
+				createdAt: true,
+			},
+			orderBy: { createdAt: "desc" },
+		});
+		res.json(users);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to fetch users" });
+	}
+};
+
+export const updateUserRole = async (req: Request, res: Response) => {
+	try {
+		const id = req.params.id as string;
+		const { role } = req.body;
+
+		const user = await prisma.user.update({
+			where: { id },
+			data: { role },
+			select: {
+				id: true,
+				email: true,
+				name: true,
+				role: true,
+			},
+		});
+		res.json(user);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to update user role" });
+	}
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+	try {
+		const id = req.params.id as string;
+		const { name, email, role } = req.body;
+
+		// Check if email is already taken by another user
+		if (email) {
+			const existing = await prisma.user.findFirst({
+				where: {
+					email,
+					NOT: { id },
+				},
+			});
+			if (existing) {
+				return res
+					.status(400)
+					.json({ error: "Email already in use by another user" });
+			}
+		}
+
+		const user = await prisma.user.update({
+			where: { id },
+			data: {
+				name,
+				email,
+				role,
+			},
+			select: {
+				id: true,
+				email: true,
+				name: true,
+				role: true,
+			},
+		});
+		res.json(user);
+	} catch (error) {
+		console.error("Update user error:", error);
+		res.status(500).json({ error: "Failed to update user" });
+	}
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+	try {
+		const id = req.params.id as string;
+
+		// Prevent deleting self
+		if (id === (req as any).user?.id) {
+			return res
+				.status(400)
+				.json({ error: "You cannot delete your own account" });
+		}
+
+		await prisma.user.delete({
+			where: { id },
+		});
+		res.status(204).send();
+	} catch (error) {
+		res.status(500).json({ error: "Failed to delete user" });
+	}
+};

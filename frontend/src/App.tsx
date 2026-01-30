@@ -14,6 +14,7 @@ import AdminLayout from "./components/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import ManageProjects from "./pages/admin/ManageProjects";
 import ManageContacts from "./pages/admin/ManageContacts";
+import ManageUsers from "./pages/admin/ManageUsers";
 
 const App = () => (
 	<AuthProvider>
@@ -55,6 +56,14 @@ const App = () => (
 						element={
 							<AdminLayout>
 								<ManageContacts />
+							</AdminLayout>
+						}
+					/>
+					<Route
+						path="/painel/usuarios"
+						element={
+							<AdminLayout>
+								<ManageUsers />
 							</AdminLayout>
 						}
 					/>
