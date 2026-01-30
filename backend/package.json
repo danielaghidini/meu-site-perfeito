@@ -11,7 +11,7 @@
 		"import-dialogues": "node src/scripts/importDialogues.js",
 		"build": "tsc",
 		"db:sync": "tsx src/scripts/sync-db.ts",
-		"start": "npx prisma db push && node dist/src/index.js",
+		"start": "node dist/src/index.js",
 		"seed": "tsx prisma/seed.ts",
 		"postinstall": "prisma generate"
 	},
