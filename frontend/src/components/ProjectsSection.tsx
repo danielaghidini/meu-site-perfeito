@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { getProjects, Project } from "@/services/api";
 
@@ -87,7 +88,7 @@ const ProjectsSection = () => {
 											<img
 												src={project.coverUrl}
 												alt={project.title}
-												className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+												className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110 filter brightness-90 contrast-110"
 											/>
 										) : (
 											<div className="w-full h-48 bg-slate-800 flex items-center justify-center text-slate-500">
@@ -124,17 +125,28 @@ const ProjectsSection = () => {
 												size="sm"
 												asChild
 											>
-												<a
-													href={
-														project.liveUrl || "#"
-													}
-													target="_blank"
-													rel="noopener noreferrer"
+												<Link
+													to={`/project/${project.slug}`}
 												>
 													<ExternalLink className="w-4 h-4" />
-													Ver Projeto
-												</a>
+													Ver Detalhes
+												</Link>
 											</Button>
+											{project.liveUrl && (
+												<Button
+													variant="ghost"
+													size="sm"
+													asChild
+												>
+													<a
+														href={project.liveUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+													>
+														Demo
+													</a>
+												</Button>
+											)}
 										</div>
 									</div>
 								</motion.article>

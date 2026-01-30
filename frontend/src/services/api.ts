@@ -124,6 +124,20 @@ export const getProjects = async (): Promise<Project[]> => {
 	}
 };
 
+export const apiGetProjectBySlug = async (
+	slug: string,
+): Promise<Project | null> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/projects/${slug}`);
+		if (!response.ok) return null;
+		const json = await response.json();
+		return json; // Assuming it already matches the Project interface
+	} catch (error) {
+		console.error("Erro ao carregar projeto:", error);
+		return null;
+	}
+};
+
 export const createProject = async (
 	projectData: Partial<Project>,
 	token: string,
