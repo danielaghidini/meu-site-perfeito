@@ -60,7 +60,7 @@ app.get("/api/health", (req, res) => {
 });
 
 // --- AUTH ---
-app.post("/auth/register", register);
+// app.post("/auth/register", register); // Desativado por segurança. Use o painel de usuários.
 app.post("/auth/login", login);
 app.get("/auth/me", authenticateToken, getMe);
 app.put("/auth/profile", authenticateToken, updateProfile);
