@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Github } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { getProjects, Project } from "@/services/api";
@@ -95,24 +95,30 @@ const ProjectsSection = () => {
 												Sem Capa
 											</div>
 										)}
-										<div className="absolute inset-0 bg-gradient-to-t from-card to-transparent opacity-60" />
+										<div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/40 to-transparent opacity-90 group-hover:opacity-70 transition-opacity duration-500" />
 									</div>
 
 									<div className="p-6 space-y-4">
-										<h3 className="font-display text-xl font-semibold group-hover:text-primary transition-colors duration-300">
-											{project.title}
-										</h3>
-										<p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
-											{project.shortDescription}
+										<div className="space-y-1">
+											<h3 className="font-display text-xl font-semibold group-hover:text-primary transition-colors duration-300">
+												{project.title}
+											</h3>
+											<p className="text-primary/80 text-xs font-medium uppercase tracking-wider">
+												{project.shortDescription}
+											</p>
+										</div>
+
+										<p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">
+											{project.description}
 										</p>
 
-										<div className="flex flex-wrap gap-2">
+										<div className="flex flex-wrap gap-2 pt-1">
 											{project.technologies
 												?.split(",")
 												.map((tag) => (
 													<span
 														key={tag.trim()}
-														className="px-3 py-1 bg-secondary/50 rounded-full text-xs font-medium"
+														className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-medium text-slate-300"
 													>
 														{tag.trim()}
 													</span>
@@ -120,30 +126,37 @@ const ProjectsSection = () => {
 										</div>
 
 										<div className="flex gap-3 pt-2">
-											<Button
-												variant="outline"
-												size="sm"
-												asChild
-											>
-												<Link
-													to={`/project/${project.slug}`}
-												>
-													<ExternalLink className="w-4 h-4" />
-													Ver Detalhes
-												</Link>
-											</Button>
 											{project.liveUrl && (
 												<Button
-													variant="ghost"
+													variant="outline"
 													size="sm"
 													asChild
+													className="bg-primary/10 border-primary/20 hover:bg-primary/20 text-white"
 												>
 													<a
 														href={project.liveUrl}
 														target="_blank"
 														rel="noopener noreferrer"
 													>
-														Demo
+														<ExternalLink className="w-4 h-4" />
+														Ver Site
+													</a>
+												</Button>
+											)}
+											{project.repoUrl && (
+												<Button
+													variant="outline"
+													size="sm"
+													asChild
+													className="border-white/10 bg-white/5 hover:bg-white/10 text-white"
+												>
+													<a
+														href={project.repoUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+													>
+														<Github className="w-4 h-4" />
+														GitHub
 													</a>
 												</Button>
 											)}

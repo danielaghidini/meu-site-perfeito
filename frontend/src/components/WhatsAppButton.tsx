@@ -31,7 +31,7 @@ const WhatsAppButton = () => {
 	};
 
 	return (
-		<div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+		<div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
 			<AnimatePresence>
 				{isOpen && (
 					<motion.div
@@ -44,13 +44,13 @@ const WhatsAppButton = () => {
 						}}
 						animate={{ opacity: 1, y: 0, scale: 1 }}
 						exit={{ opacity: 0, y: 20, scale: 0.95 }}
-						className="mb-4 w-80 sm:w-96 bg-[#14181F] border border-white/10 rounded-3xl shadow-2xl overflow-hidden font-outfit"
+						className="mb-4 w-[calc(100vw-2rem)] sm:w-96 bg-[#14181F] border border-white/10 rounded-3xl shadow-2xl overflow-hidden font-outfit"
 					>
 						{/* Header */}
 						<div className="bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] p-4 text-white">
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-3">
-									<div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white/20">
+									<div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-white/20">
 										<img
 											src="/images/daniela.jpg"
 											alt="Daniela Ghidini"
@@ -62,7 +62,7 @@ const WhatsAppButton = () => {
 											Daniela Ghidini
 										</p>
 										<div className="flex items-center gap-1.5">
-											<span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+											<span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
 											<span className="text-[10px] opacity-90">
 												Online agora
 											</span>
@@ -79,7 +79,7 @@ const WhatsAppButton = () => {
 						</div>
 
 						{/* Body */}
-						<div className="p-6 bg-[#0B0E14] space-y-4">
+						<div className="p-5 bg-[#0B0E14] space-y-4">
 							<div className="bg-white/5 p-4 rounded-2xl rounded-tl-none border border-white/5 max-w-[85%]">
 								<p className="text-sm text-slate-300">
 									Olá! Como posso ajudar você hoje? 👋
@@ -88,7 +88,7 @@ const WhatsAppButton = () => {
 
 							<form
 								onSubmit={handleSendMessage}
-								className="space-y-3 pt-2"
+								className="space-y-3 pt-1"
 							>
 								<div className="relative">
 									<textarea
@@ -132,17 +132,12 @@ const WhatsAppButton = () => {
 			>
 				<button
 					onClick={() => setIsOpen(!isOpen)}
-					className="relative group flex items-center justify-center w-16 h-16 bg-[#25D366] text-white rounded-full shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] transition-all duration-300 active:scale-90"
+					className="relative group flex items-center justify-center w-12 h-12 bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] text-white rounded-full shadow-[0_0_15px_rgba(0,229,255,0.3)] hover:shadow-[0_0_20px_rgba(0,229,255,0.5)] transition-all duration-300 active:scale-90"
 				>
-					{/* Pulse Animation (hidden when open) */}
-					{!isOpen && (
-						<span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20" />
-					)}
-
 					{isOpen ? (
-						<X className="w-8 h-8" />
+						<X className="w-6 h-6" />
 					) : (
-						<WhatsAppIcon className="w-8 h-8" />
+						<WhatsAppIcon className="w-6 h-6" />
 					)}
 
 					{/* Tooltip (only when closed) */}
