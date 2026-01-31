@@ -27,8 +27,7 @@ import {
 	Link,
 	Type,
 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
+import ImageLibrary from "./ImageLibrary";
 import {
 	Select,
 	SelectContent,
@@ -37,7 +36,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import ImageLibrary from "./ImageLibrary";
 
 interface ArticleFormProps {
 	article?: Post;
@@ -583,12 +581,12 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
 						prose-a:text-primary hover:prose-a:underline
 						prose-code:text-primary prose-code:bg-muted/50 prose-code:px-1 prose-code:rounded prose-code:font-mono
 						prose-img:rounded-xl prose-img:shadow-lg"
-					>
-						<ReactMarkdown rehypePlugins={[rehypeRaw]}>
-							{formData.content ||
-								"*Nada para visualizar ainda...*"}
-						</ReactMarkdown>
-					</div>
+						dangerouslySetInnerHTML={{
+							__html:
+								formData.content ||
+								"<i>Nada para visualizar ainda...</i>",
+						}}
+					/>
 				)}
 			</div>
 

@@ -8,8 +8,6 @@ import { ptBR } from "date-fns/locale";
 import { ArrowLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
 import SEO from "@/components/SEO";
 
 const SinglePost = () => {
@@ -138,11 +136,8 @@ const SinglePost = () => {
 						prose-a:text-primary hover:prose-a:underline
 						prose-code:text-primary prose-code:bg-muted/50 prose-code:px-1 prose-code:rounded prose-code:font-mono
 						prose-img:rounded-xl prose-img:shadow-lg"
-					>
-						<ReactMarkdown rehypePlugins={[rehypeRaw]}>
-							{post.content}
-						</ReactMarkdown>
-					</article>
+						dangerouslySetInnerHTML={{ __html: post.content }}
+					/>
 				</div>
 			</main>
 			<Footer simple />

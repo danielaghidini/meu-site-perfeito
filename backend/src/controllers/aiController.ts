@@ -22,7 +22,8 @@ export const generateArticleContent = async (req: Request, res: Response) => {
     
     FORMATO TÉCNICO (HTML):
     - Utilize apenas tags HTML (<h2>, <h3>, <ul>, <li>, <p>, <strong>, <em>, <blockquote>).
-    - É PROIBIDO o uso de Markdown ou de cores de fundo/estilos que prejudiquem o contraste.
+    - O sistema NÃO suporta Markdown. Símbolos como **, ##, [title](url), etc, NÃO serão processados e aparecerão como texto bruto no site. Use apenas tags HTML equivalentes.
+    - É PROIBIDO o uso de Markdown.
     - Use <hr style="border: 0; border-top: 1px solid #333; margin: 25px 0;"> para separar as grandes seções do artigo.
     
     Crie um conteúdo que seja autoridade no assunto e tecnicamente perfeito para SEO.
