@@ -19,7 +19,6 @@ export const getAllArticles = async (req: Request, res: Response) => {
 			orderBy: { createdAt: "desc" },
 		});
 
-		// Se buscou por slug via query param, retorna no formato esperado pelo normalize
 		if (slug && articles.length > 0) {
 			return res.json({ data: articles[0] });
 		}
@@ -33,7 +32,7 @@ export const getAllArticles = async (req: Request, res: Response) => {
 
 export const getArticleBySlug = async (req: Request, res: Response) => {
 	try {
-		const { slug } = req.params;
+		const slug = req.params.slug as string;
 		const article = await prisma.article.findUnique({
 			where: { slug },
 			include: {
@@ -56,7 +55,7 @@ export const createArticle = async (req: Request, res: Response) => {
 		content,
 		excerpt,
 		categoryId,
-		tags, // Opcional: Nome da categoria
+		tags,
 		coverUrl,
 		isFeatured,
 		published,
@@ -65,7 +64,6 @@ export const createArticle = async (req: Request, res: Response) => {
 	try {
 		let finalCategoryId = categoryId || null;
 
-		// Se enviou o nome da categoria (tags) e não o ID, buscamos ou criamos
 		if (!finalCategoryId && tags) {
 			const category = await prisma.category.upsert({
 				where: { name: tags },
@@ -99,7 +97,7 @@ export const createArticle = async (req: Request, res: Response) => {
 };
 
 export const updateArticle = async (req: Request, res: Response) => {
-	const { id } = req.params;
+	const id = req.params.id as string;
 	const {
 		title,
 		slug,
@@ -115,7 +113,6 @@ export const updateArticle = async (req: Request, res: Response) => {
 	try {
 		let finalCategoryId = categoryId || null;
 
-		// Priorizamos o categoryId se ele for enviado e for válido
 		if (!finalCategoryId && tags) {
 			const category = await prisma.category.upsert({
 				where: { name: tags },
@@ -149,7 +146,7 @@ export const updateArticle = async (req: Request, res: Response) => {
 };
 
 export const deleteArticle = async (req: Request, res: Response) => {
-	const { id } = req.params;
+	const id = req.params.id as string;
 	try {
 		await prisma.article.delete({
 			where: { id },
