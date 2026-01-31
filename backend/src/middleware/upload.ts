@@ -21,8 +21,12 @@ const storage = new CloudinaryStorage({
 	params: {
 		folder: "meu-site-perfeito",
 		allowed_formats: ["jpg", "png", "jpeg", "webp", "gif"],
+		format: "webp",
+		transformation: [
+			{ width: 1200, height: 1200, crop: "limit" },
+			{ quality: "auto" },
+		],
 		public_id: (req: any, file: any) => {
-			// Remove a extensão do nome original para o public_id
 			const name = file.originalname.split(".")[0];
 			return `${Date.now()}-${name}`;
 		},
