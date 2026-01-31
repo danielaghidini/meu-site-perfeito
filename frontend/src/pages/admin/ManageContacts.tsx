@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
 	getContacts,
 	Contact,
@@ -42,7 +42,7 @@ const ManageContacts = () => {
 	);
 	const { token } = useAuth();
 
-	const fetchContacts = async () => {
+	const fetchContacts = useCallback(async () => {
 		if (!token) return;
 		try {
 			const data = await getContacts(token);
@@ -52,11 +52,11 @@ const ManageContacts = () => {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [token]);
 
 	useEffect(() => {
 		fetchContacts();
-	}, [token]);
+	}, [fetchContacts]);
 
 	const handleStatusChange = async (
 		id: string,

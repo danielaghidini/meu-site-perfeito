@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { getMedia, Media } from "@/services/api";
 import { useAuth } from "@/contexts/useAuth";
 import {
@@ -24,7 +24,7 @@ const ImageLibrary: React.FC<ImageLibraryProps> = ({ onSelect, trigger }) => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const { token } = useAuth();
 
-	const loadImages = async () => {
+	const loadImages = useCallback(async () => {
 		if (!token) return;
 		setIsLoading(true);
 		try {
@@ -35,13 +35,13 @@ const ImageLibrary: React.FC<ImageLibraryProps> = ({ onSelect, trigger }) => {
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, [token]);
 
 	useEffect(() => {
 		if (isOpen) {
 			loadImages();
 		}
-	}, [isOpen]);
+	}, [isOpen, loadImages]);
 
 	const filteredImages = images.filter((img) =>
 		img.url.toLowerCase().includes(searchTerm.toLowerCase()),

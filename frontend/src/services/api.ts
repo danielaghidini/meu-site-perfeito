@@ -58,8 +58,22 @@ const getImageUrl = (url?: string) => {
 	return url;
 };
 
+interface BackendArticle {
+	id: string;
+	title: string;
+	slug: string;
+	content: string;
+	excerpt: string;
+	coverUrl?: string;
+	categoryId?: string;
+	published?: boolean;
+	category?: { id: string; name: string };
+	createdAt: string;
+	user?: { name: string; avatar?: string };
+}
+
 // Adapter to convert custom backend "Article" to frontend "Post"
-const normalizeArticle = (item: any): Post => {
+const normalizeArticle = (item: BackendArticle): Post => {
 	return {
 		id: item.id,
 		title: item.title,

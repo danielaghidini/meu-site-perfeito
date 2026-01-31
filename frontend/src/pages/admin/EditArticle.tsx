@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getPostBySlug, Post } from "@/services/api";
 import ArticleForm from "@/components/admin/ArticleForm";
@@ -12,13 +12,7 @@ const EditArticle = () => {
 	const [article, setArticle] = useState<Post | undefined>(undefined);
 	const [isLoading, setIsLoading] = useState(false);
 
-	useEffect(() => {
-		if (slug && slug !== "novo") {
-			loadArticle();
-		}
-	}, [slug]);
-
-	const loadArticle = async () => {
+	const loadArticle = useCallback(async () => {
 		setIsLoading(true);
 		try {
 			const data = await getPostBySlug(slug!);
@@ -34,7 +28,13 @@ const EditArticle = () => {
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, [slug, navigate]);
+
+	useEffect(() => {
+		if (slug && slug !== "novo") {
+			loadArticle();
+		}
+	}, [slug, loadArticle]);
 
 	return (
 		<div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700 font-inter">

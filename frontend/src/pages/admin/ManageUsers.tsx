@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
 	apiGetUsers,
 	apiUpdateUser,
@@ -92,7 +92,7 @@ const ManageUsers = () => {
 	// Permissão de administrador para ações sensíveis
 	const isAdmin = currentUser?.role === "ADMIN";
 
-	const fetchUsers = async () => {
+	const fetchUsers = useCallback(async () => {
 		if (!token) return;
 		try {
 			const data = await apiGetUsers(token);
@@ -102,11 +102,11 @@ const ManageUsers = () => {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [token]);
 
 	useEffect(() => {
 		fetchUsers();
-	}, [token]);
+	}, [fetchUsers]);
 
 	const handleRoleChange = async (userId: string, currentRole: string) => {
 		if (!token || !isAdmin) return;
@@ -171,8 +171,12 @@ const ManageUsers = () => {
 
 			fetchUsers();
 			setUserToEdit(null);
-		} catch (error: any) {
-			toast.error(error.message || "Erro ao atualizar usuário");
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: "Erro ao atualizar usuário";
+			toast.error(errorMessage);
 		}
 	};
 
@@ -191,8 +195,12 @@ const ManageUsers = () => {
 				password: "",
 				role: "USER",
 			});
-		} catch (error: any) {
-			toast.error(error.message || "Erro ao criar usuário");
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: "Erro ao criar usuário";
+			toast.error(errorMessage);
 		}
 	};
 
