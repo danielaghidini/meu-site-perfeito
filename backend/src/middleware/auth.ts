@@ -1,14 +1,7 @@
 import "dotenv/config";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET || "your_fallback_secret_key";
-console.log(
-	"JWT_SECRET loaded in auth.ts. Length:",
-	JWT_SECRET.length,
-	"Fallback used?",
-	JWT_SECRET === "your_fallback_secret_key",
-);
+import { JWT_SECRET } from "../config.js";
 
 export interface AuthRequest extends Request {
 	user?: any;
