@@ -524,3 +524,35 @@ export const getMedia = async (token: string): Promise<Media[]> => {
 		return [];
 	}
 };
+
+export interface DashboardStats {
+	stats: {
+		articles: number;
+		projects: number;
+		contacts: number;
+		newContacts: number;
+	};
+	activities: Array<{
+		id: string;
+		type: "article" | "project" | "contact";
+		title: string;
+		date: string;
+		status?: string;
+	}>;
+}
+
+export const getDashboardStats = async (
+	token: string,
+): Promise<DashboardStats | null> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {
+			headers: { Authorization: `Bearer ${token}` },
+		});
+		if (!response.ok)
+			throw new Error("Falha ao buscar estatísticas do painel");
+		return await response.json();
+	} catch (error) {
+		console.error("Erro ao carregar estatísticas:", error);
+		return null;
+	}
+};

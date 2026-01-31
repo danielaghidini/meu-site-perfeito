@@ -45,6 +45,7 @@ import {
 } from "./controllers/categoryController.js";
 import { generateArticleContent } from "./controllers/aiController.js";
 import { getAllImages } from "./controllers/mediaController.js";
+import { getStats } from "./controllers/dashboardController.js";
 import { upload } from "./middleware/upload.js";
 
 console.log("Starting server...");
@@ -112,6 +113,14 @@ app.delete(
 	authenticateToken,
 	authorizeRole(["ADMIN"]),
 	deleteUser,
+);
+
+// --- DASHBOARD ---
+app.get(
+	"/api/dashboard/stats",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	getStats,
 );
 
 // --- BLOG (ARTICLES) ---
