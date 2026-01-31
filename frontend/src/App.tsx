@@ -20,6 +20,7 @@ import ManageUsers from "./pages/admin/ManageUsers";
 import ManageArticles from "./pages/admin/ManageArticles";
 import ManageCategories from "./pages/admin/ManageCategories";
 import EditArticle from "./pages/admin/EditArticle";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 
 const ConditionalWhatsAppButton = () => {
 	const location = useLocation();
@@ -38,6 +39,7 @@ const App = () => (
 					v7_relativeSplatPath: true,
 				}}
 			>
+				<GoogleAnalytics />
 				<ConditionalWhatsAppButton />
 				<Routes>
 					<Route path="/" element={<Index />} />
