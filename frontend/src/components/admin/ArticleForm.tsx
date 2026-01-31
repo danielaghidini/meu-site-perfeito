@@ -200,6 +200,12 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
 		const file = e.target.files?.[0];
 		if (!file || !token) return;
 
+		// Limite de 5MB no cliente para evitar uploads desnecessários
+		if (file.size > 5 * 1024 * 1024) {
+			toast.error("A imagem é muito grande. O limite é 5MB.");
+			return;
+		}
+
 		setIsUploading(true);
 		try {
 			const url = await uploadImage(file, token);
