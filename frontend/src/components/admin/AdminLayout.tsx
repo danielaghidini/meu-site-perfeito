@@ -10,6 +10,7 @@ import {
 	Globe,
 	Mail,
 	Users,
+	Tags,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
@@ -48,6 +49,11 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 			path: "/painel/posts",
 		},
 		{
+			label: "Categorias",
+			icon: <Tags size={20} />,
+			path: "/painel/categorias",
+		},
+		{
 			label: "Portfólio",
 			icon: <Briefcase size={20} />,
 			path: "/painel/projetos",
@@ -77,22 +83,29 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 				</div>
 
 				<nav className="flex-1 p-6 space-y-3">
-					{menuItems.map((item) => (
-						<Link
-							key={item.path}
-							to={item.path}
-							className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${
-								location.pathname === item.path
-									? "bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] text-white font-bold shadow-[0_0_20px_rgba(0,229,255,0.15)]"
-									: "text-slate-400 hover:bg-white/5 hover:text-white"
-							}`}
-						>
-							{item.icon}
-							<span className="text-base tracking-wide">
-								{item.label}
-							</span>
-						</Link>
-					))}
+					{menuItems.map((item) => {
+						const isActive =
+							item.path === "/painel"
+								? location.pathname === "/painel"
+								: location.pathname.startsWith(item.path);
+
+						return (
+							<Link
+								key={item.path}
+								to={item.path}
+								className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${
+									isActive
+										? "bg-gradient-to-r from-[#00E5FF] to-[#7B61FF] text-white font-bold shadow-[0_0_20px_rgba(0,229,255,0.15)]"
+										: "text-slate-400 hover:bg-white/5 hover:text-white"
+								}`}
+							>
+								{item.icon}
+								<span className="text-base tracking-wide">
+									{item.label}
+								</span>
+							</Link>
+						);
+					})}
 				</nav>
 
 				<div className="p-6 border-t border-white/5 flex flex-col gap-3">

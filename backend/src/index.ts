@@ -31,9 +31,27 @@ import {
 	updateContactStatus,
 	deleteContact,
 } from "./controllers/contactController.js";
+import {
+	getAllArticles,
+	getArticleBySlug,
+	createArticle,
+	updateArticle,
+	deleteArticle,
+} from "./controllers/articleController.js";
+import {
+	getAllCategories,
+	createCategory,
+	deleteCategory,
+} from "./controllers/categoryController.js";
+import { generateArticleContent } from "./controllers/aiController.js";
+import { getAllImages } from "./controllers/mediaController.js";
 import { upload } from "./middleware/upload.js";
 
 console.log("Starting server...");
+console.log(
+	"NVIDIA_API_KEY loaded:",
+	process.env.NVIDIA_API_KEY ? "Yes" : "No",
+);
 connectDB();
 
 const app = express();
@@ -72,6 +90,8 @@ app.post(
 	},
 );
 
+app.get("/api/media", authenticateToken, getAllImages);
+
 // --- AUTH ---
 // app.post("/auth/register", register); // Desativado por segurança. Use o painel de usuários.
 app.post("/auth/login", login);
@@ -95,85 +115,25 @@ app.delete(
 );
 
 // --- BLOG (ARTICLES) ---
-app.get("/api/articles", async (req, res) => {
-	try {
-		const { slug } = req.query;
-		if (slug) {
-			const article = await prisma.article.findUnique({
-				where: { slug: String(slug) },
-				include: {
-					category: true,
-					user: { select: { name: true, avatar: true } },
-				},
-			});
-			return res.json({ data: [article] }); // Formato array p/ compatibilidade
-		}
-
-		const articles = await prisma.article.findMany({
-			include: {
-				category: true,
-				user: { select: { name: true, avatar: true } },
-			},
-			orderBy: { createdAt: "desc" },
-		});
-		res.json(articles);
-	} catch (error) {
-		console.error("Fetch articles error:", error);
-		res.status(500).json({ error: "Failed to fetch articles" });
-	}
-});
-
-// Get Single Article by Slug (Rota direta)
-app.get("/api/articles/:slug", async (req, res) => {
-	try {
-		const { slug } = req.params;
-		const article = await prisma.article.findUnique({
-			where: { slug },
-			include: {
-				category: true,
-				user: { select: { name: true, avatar: true } },
-			},
-		});
-		if (!article) return res.status(404).json({ error: "Post not found" });
-		res.json({ data: article });
-	} catch (error) {
-		res.status(500).json({ error: "Error fetching article" });
-	}
-});
-
+app.get("/api/articles", getAllArticles);
+app.get("/api/articles/:slug", getArticleBySlug);
 app.post(
 	"/api/articles",
 	authenticateToken,
 	authorizeRole(["ADMIN"]),
-	async (req, res) => {
-		const {
-			title,
-			slug,
-			content,
-			excerpt,
-			categoryId,
-			coverUrl,
-			isFeatured,
-		} = req.body;
-		try {
-			const article = await prisma.article.create({
-				data: {
-					title,
-					slug,
-					content,
-					excerpt,
-					categoryId,
-					coverUrl,
-					isFeatured,
-					authorId: req.user.id,
-				},
-			});
-			res.status(201).json(article);
-		} catch (error) {
-			console.error("Create article error:", error);
-			res.status(500).json({ error: "Failed to create article" });
-		}
-	},
+	createArticle,
+);
+app.put(
+	"/api/articles/:id",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	updateArticle,
+);
+app.delete(
+	"/api/articles/:id",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	deleteArticle,
 );
 
 // --- PROJECTS ---
@@ -217,6 +177,28 @@ app.delete(
 	authenticateToken,
 	authorizeRole(["ADMIN"]),
 	deleteContact,
+);
+// --- CATEGORIES ---
+app.get("/api/categories", getAllCategories);
+app.post(
+	"/api/categories",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	createCategory,
+);
+app.delete(
+	"/api/categories/:id",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	deleteCategory,
+);
+
+// --- AI ASSISTANT ---
+app.post(
+	"/api/ai/generate",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	generateArticleContent,
 );
 
 app.listen(port, () => {

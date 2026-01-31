@@ -9,6 +9,7 @@ import { ArrowLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import SEO from "@/components/SEO";
 
 const SinglePost = () => {
@@ -35,7 +36,6 @@ const SinglePost = () => {
 	if (loading) {
 		return (
 			<div className="min-h-screen flex flex-col">
-				<Header />
 				<main className="flex-grow pt-24 pb-12">
 					<div className="container mx-auto px-4 max-w-3xl">
 						<Skeleton className="h-8 w-32 mb-6" />
@@ -56,7 +56,6 @@ const SinglePost = () => {
 	if (!post) {
 		return (
 			<div className="min-h-screen flex flex-col">
-				<Header />
 				<main className="flex-grow pt-24 pb-12 flex items-center justify-center">
 					<div className="text-center">
 						<h1 className="text-3xl font-bold mb-4">
@@ -86,8 +85,10 @@ const SinglePost = () => {
 				ogImage={post.coverUrl || "/og-image.png"}
 				canonical={`/blog/${post.slug}`}
 				ogType="article"
+				authorName={post.user?.name || "Daniel Aghidini"}
+				publishedDate={post.publishedAt}
+				articleSection={post.tags}
 			/>
-			<Header />
 			<main className="flex-grow pt-24 pb-12">
 				<div className="container mx-auto px-4 max-w-4xl">
 					<Button
@@ -138,11 +139,13 @@ const SinglePost = () => {
 						prose-code:text-primary prose-code:bg-muted/50 prose-code:px-1 prose-code:rounded prose-code:font-mono
 						prose-img:rounded-xl prose-img:shadow-lg"
 					>
-						<ReactMarkdown>{post.content}</ReactMarkdown>
+						<ReactMarkdown rehypePlugins={[rehypeRaw]}>
+							{post.content}
+						</ReactMarkdown>
 					</article>
 				</div>
 			</main>
-			<Footer />
+			<Footer simple />
 		</div>
 	);
 };

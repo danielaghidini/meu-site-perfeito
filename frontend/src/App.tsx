@@ -17,6 +17,9 @@ import Dashboard from "./pages/admin/Dashboard";
 import ManageProjects from "./pages/admin/ManageProjects";
 import ManageContacts from "./pages/admin/ManageContacts";
 import ManageUsers from "./pages/admin/ManageUsers";
+import ManageArticles from "./pages/admin/ManageArticles";
+import ManageCategories from "./pages/admin/ManageCategories";
+import EditArticle from "./pages/admin/EditArticle";
 
 const ConditionalWhatsAppButton = () => {
 	const location = useLocation();
@@ -84,9 +87,23 @@ const App = () => (
 						path="/painel/posts"
 						element={
 							<AdminLayout>
-								<div className="text-slate-500 py-20 text-center">
-									Gerenciamento de posts chegando em breve...
-								</div>
+								<ManageArticles />
+							</AdminLayout>
+						}
+					/>
+					<Route
+						path="/painel/posts/:slug"
+						element={
+							<AdminLayout>
+								<EditArticle />
+							</AdminLayout>
+						}
+					/>
+					<Route
+						path="/painel/categorias"
+						element={
+							<AdminLayout>
+								<ManageCategories />
 							</AdminLayout>
 						}
 					/>

@@ -157,4 +157,20 @@
 		backdrop-filter: blur(20px);
 		border: 1px solid hsl(220 15% 20% / 0.5);
 	}
+
+	.text-cyan,
+	.prose .text-cyan,
+	.prose .text-cyan * {
+		color: #00e5ff !important;
+	}
+	.text-purple,
+	.prose .text-purple,
+	.prose .text-purple * {
+		color: #7b61ff !important;
+	}
+
+	:where(.prose) .text-cyan,
+	:where(.prose) .text-purple {
+		color: inherit;
+	}
 }

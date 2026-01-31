@@ -28,20 +28,28 @@ const PostCard = ({ post }: PostCardProps) => {
 	return (
 		<Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300 overflow-hidden">
 			{featuredImage && (
-				<div className="aspect-[3/2] w-full overflow-hidden bg-muted">
+				<Link
+					to={`/blog/${post.slug}`}
+					className="aspect-[3/2] w-full overflow-hidden bg-muted block"
+				>
 					<img
 						src={featuredImage}
 						alt={post.title}
 						className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
 					/>
-				</div>
+				</Link>
 			)}
 			<CardHeader>
-				<div className="text-sm text-muted-foreground mb-2 flex justify-between">
+				<div className="text-sm text-muted-foreground mb-2 flex justify-between items-center">
 					<span>{formattedDate}</span>
+					{post.tags && (
+						<span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+							{post.tags}
+						</span>
+					)}
 				</div>
-				<CardTitle className="text-xl line-clamp-2">
-					{post.title}
+				<CardTitle className="text-xl line-clamp-2 hover:text-primary transition-colors">
+					<Link to={`/blog/${post.slug}`}>{post.title}</Link>
 				</CardTitle>
 			</CardHeader>
 			<CardContent className="flex-grow">

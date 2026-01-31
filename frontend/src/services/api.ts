@@ -11,11 +11,19 @@ export interface Post {
 	excerpt: string;
 	coverUrl?: string; // Changed from 'cover' object to direct URL string
 	tags?: string;
+	categoryId?: string;
+	published?: boolean;
 	publishedAt: string; // Mapped from createdAt for compatibility
 	user?: {
 		name: string;
 		avatar?: string;
 	};
+}
+
+export interface Category {
+	id: string;
+	name: string;
+	description?: string;
 }
 
 export interface Project {
@@ -51,17 +59,7 @@ const getImageUrl = (url?: string) => {
 };
 
 // Adapter to convert custom backend "Article" to frontend "Post"
-const normalizeArticle = (item: {
-	id: string;
-	title: string;
-	slug: string;
-	content: string;
-	excerpt: string;
-	coverUrl?: string;
-	category?: { name: string };
-	createdAt: string;
-	user?: { name: string; avatar?: string };
-}): Post => {
+const normalizeArticle = (item: any): Post => {
 	return {
 		id: item.id,
 		title: item.title,
@@ -70,6 +68,8 @@ const normalizeArticle = (item: {
 		excerpt: item.excerpt,
 		coverUrl: item.coverUrl,
 		tags: item.category?.name,
+		categoryId: item.categoryId || item.category?.id,
+		published: item.published,
 		publishedAt: item.createdAt,
 		user: item.user,
 	};
@@ -82,9 +82,13 @@ const normalizeProject = (item: Project): Project => {
 	};
 };
 
-export const getPosts = async (page = 1, perPage = 9): Promise<Post[]> => {
+export const getPosts = async (published?: boolean): Promise<Post[]> => {
 	try {
-		const response = await fetch(`${API_BASE_URL}/articles`);
+		const url =
+			published !== undefined
+				? `${API_BASE_URL}/articles?published=${published}`
+				: `${API_BASE_URL}/articles`;
+		const response = await fetch(url);
 		if (!response.ok) throw new Error("Falha ao buscar posts");
 		const json = await response.json();
 		if (json.data && Array.isArray(json.data))
@@ -108,6 +112,57 @@ export const getPostBySlug = async (slug: string): Promise<Post | null> => {
 	} catch (error) {
 		console.error("Erro ao carregar post:", error);
 		return null;
+	}
+};
+
+// --- CATEGORIES ---
+export const getCategories = async (): Promise<Category[]> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/categories`);
+		if (!response.ok) throw new Error("Falha ao buscar categorias");
+		return await response.json();
+	} catch (error) {
+		console.error("Erro ao carregar categorias:", error);
+		return [];
+	}
+};
+
+export const createCategory = async (
+	data: Partial<Category>,
+	token: string,
+): Promise<Category | null> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/categories`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify(data),
+		});
+		if (!response.ok) throw new Error("Falha ao criar categoria");
+		return await response.json();
+	} catch (error) {
+		console.error("Erro ao criar categoria:", error);
+		return null;
+	}
+};
+
+export const deleteCategory = async (
+	id: string,
+	token: string,
+): Promise<boolean> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
+			method: "DELETE",
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.ok;
+	} catch (error) {
+		console.error("Erro ao excluir categoria:", error);
+		return false;
 	}
 };
 
@@ -330,7 +385,92 @@ export const apiDeleteUser = async (
 	if (!response.ok) throw new Error("Failed to delete user");
 };
 
-export const createPost = async (): Promise<Post | null> => null;
+export const createPost = async (
+	postData: Partial<Post>,
+	token: string,
+): Promise<Post | null> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/articles`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify(postData),
+		});
+		if (!response.ok) throw new Error("Falha ao criar post");
+		const json = await response.json();
+		return normalizeArticle(json);
+	} catch (error) {
+		console.error("Erro ao criar post:", error);
+		return null;
+	}
+};
+
+export const updatePost = async (
+	id: string,
+	postData: Partial<Post>,
+	token: string,
+): Promise<Post | null> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/articles/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify(postData),
+		});
+		if (!response.ok) throw new Error("Falha ao atualizar post");
+		const json = await response.json();
+		return normalizeArticle(json);
+	} catch (error) {
+		console.error("Erro ao atualizar post:", error);
+		return null;
+	}
+};
+
+export const deletePost = async (
+	id: string,
+	token: string,
+): Promise<boolean> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/articles/${id}`, {
+			method: "DELETE",
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.ok;
+	} catch (error) {
+		console.error("Erro ao deletar post:", error);
+		return false;
+	}
+};
+
+export const generateAIContent = async (
+	title: string,
+	prompt: string,
+	token: string,
+): Promise<string | null> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/ai/generate`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify({ title, prompt }),
+		});
+
+		if (!response.ok) throw new Error("Falha na geração com IA");
+		const data = await response.json();
+		return data.content;
+	} catch (error) {
+		console.error("Erro na geração com IA:", error);
+		return null;
+	}
+};
 
 export const uploadImage = async (
 	file: File,
@@ -354,5 +494,19 @@ export const uploadImage = async (
 	} catch (error) {
 		console.error("Erro no upload:", error);
 		return null;
+	}
+};
+export const getMedia = async (token: string): Promise<Media[]> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/media`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		if (!response.ok) throw new Error("Falha ao buscar mídia");
+		return await response.json();
+	} catch (error) {
+		console.error("Erro ao carregar mídia:", error);
+		return [];
 	}
 };

@@ -13,6 +13,7 @@ import {
 import { useAuth } from "@/contexts/useAuth";
 import { toast } from "sonner";
 import { Upload, ImageIcon, Loader2 } from "lucide-react";
+import ImageLibrary from "./ImageLibrary";
 
 interface ProjectFormProps {
 	project?: Project;
@@ -264,6 +265,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 								</Button>
 							</div>
 						</div>
+						<ImageLibrary
+							onSelect={(url) =>
+								setFormData((p) => ({ ...p, coverUrl: url }))
+							}
+						/>
 					</div>
 				</div>
 				<div className="space-y-2">
