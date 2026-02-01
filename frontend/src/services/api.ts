@@ -556,3 +556,88 @@ export const getDashboardStats = async (
 		return null;
 	}
 };
+
+// --- SOCIAL MEDIA ---
+export interface SocialSettings {
+	instagramId: string | null;
+	hasToken: boolean;
+	appId: string;
+}
+
+export const getSocialSettings = async (
+	token: string,
+): Promise<SocialSettings | null> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/social/settings`, {
+			headers: { Authorization: `Bearer ${token}` },
+		});
+		if (!response.ok) throw new Error("Falha ao buscar config social");
+		return await response.json();
+	} catch (error) {
+		console.error("Erro ao carregar config social:", error);
+		return null;
+	}
+};
+
+export const saveInstagramToken = async (
+	shortLivedToken: string,
+	token: string,
+): Promise<boolean> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/social/token`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify({ shortLivedToken }),
+		});
+		return response.ok;
+	} catch (error) {
+		console.error("Erro ao salvar token instagram:", error);
+		return false;
+	}
+};
+
+export const generateInstagramCaption = async (
+	idea: string,
+	token: string,
+): Promise<string | null> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/social/caption`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify({ idea }),
+		});
+		if (!response.ok) throw new Error("Falha ao gerar legenda");
+		const data = await response.json();
+		return data.caption;
+	} catch (error) {
+		console.error("Erro ao gerar legenda:", error);
+		return null;
+	}
+};
+
+export const publishToInstagram = async (
+	imageUrl: string,
+	caption: string,
+	token: string,
+): Promise<boolean> => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/social/publish`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify({ imageUrl, caption }),
+		});
+		return response.ok;
+	} catch (error) {
+		console.error("Erro ao publicar no instagram:", error);
+		return false;
+	}
+};

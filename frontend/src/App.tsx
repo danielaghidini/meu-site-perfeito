@@ -19,6 +19,7 @@ import ManageContacts from "./pages/admin/ManageContacts";
 import ManageUsers from "./pages/admin/ManageUsers";
 import ManageArticles from "./pages/admin/ManageArticles";
 import ManageCategories from "./pages/admin/ManageCategories";
+import ManageSocial from "./pages/admin/ManageSocial";
 import EditArticle from "./pages/admin/EditArticle";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 
@@ -58,6 +59,14 @@ const App = () => (
 						element={
 							<AdminLayout>
 								<Dashboard />
+							</AdminLayout>
+						}
+					/>
+					<Route
+						path="/painel/social"
+						element={
+							<AdminLayout>
+								<ManageSocial />
 							</AdminLayout>
 						}
 					/>
