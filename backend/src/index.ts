@@ -64,12 +64,26 @@ connectDB();
 const app = express();
 const port = process.env.PORT || 3001;
 
-// CORS - Explicitly allowing everything for production debugging
+const allowedOrigins = [
+	"http://localhost:5173",
+	"http://localhost:5174",
+	"https://meusiteperfeito.com.br",
+	"https://www.meusiteperfeito.com.br",
+	"https://frontend-production-7abb.up.railway.app",
+];
+
 app.use(
 	cors({
-		origin: "*",
+		origin: (origin, callback) => {
+			if (!origin || allowedOrigins.includes(origin)) {
+				callback(null, true);
+			} else {
+				callback(new Error("Not allowed by CORS"));
+			}
+		},
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		allowedHeaders: ["Content-Type", "Authorization"],
+		credentials: true,
 	}),
 );
 
