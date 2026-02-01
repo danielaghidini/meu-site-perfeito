@@ -57,6 +57,7 @@ const ManageSocial = () => {
 
 		// Initialize Facebook SDK if we have the App ID
 		if (data?.appId) {
+			console.log("DEBUG: Inicializando FB com o ID:", data.appId);
 			const initFB = () => {
 				if (window.FB) {
 					window.FB.init({
