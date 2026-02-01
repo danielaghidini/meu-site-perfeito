@@ -78,6 +78,16 @@ const ManageSocial = () => {
 	};
 
 	const handleFacebookLogin = () => {
+		if (!settings?.appId) {
+			toast.error(
+				"ID do Aplicativo não configurado no servidor (Railway).",
+			);
+			console.error(
+				"DEBUG: appId está ausente nas configurações recebidas.",
+			);
+			return;
+		}
+
 		if (!window.FB) {
 			toast.error(
 				"Facebook SDK ainda não carregou. Tente novamente em instantes.",
