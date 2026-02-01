@@ -6,6 +6,7 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
+	DialogDescription,
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -65,6 +66,10 @@ const ImageLibrary: React.FC<ImageLibraryProps> = ({ onSelect, trigger }) => {
 					<DialogTitle className="text-2xl font-bold font-sora">
 						Biblioteca de Mídia
 					</DialogTitle>
+					<DialogDescription className="text-slate-400 text-sm">
+						Selecione uma imagem da sua biblioteca para usar no
+						post.
+					</DialogDescription>
 				</DialogHeader>
 
 				<div className="relative my-4">

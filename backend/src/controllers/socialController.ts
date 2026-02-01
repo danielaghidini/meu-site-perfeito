@@ -168,6 +168,7 @@ export const publishToInstagram = async (req: Request, res: Response) => {
 		const containerData: any = await containerRes.json();
 
 		if (containerData.error) {
+			console.error("Facebook API Container Error:", containerData.error);
 			return res.status(400).json({ error: containerData.error.message });
 		}
 
@@ -187,6 +188,7 @@ export const publishToInstagram = async (req: Request, res: Response) => {
 		const publishData: any = await publishRes.json();
 
 		if (publishData.error) {
+			console.error("Facebook API Publish Error:", publishData.error);
 			return res.status(400).json({ error: publishData.error.message });
 		}
 
