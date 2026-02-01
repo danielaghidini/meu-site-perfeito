@@ -29,6 +29,7 @@ export const getSocialSettings = async (req: Request, res: Response) => {
 			appId: FB_APP_ID,
 		});
 	} catch (error) {
+		console.error("DEBUG: Error in getSocialSettings:", error);
 		res.status(500).json({ error: "Failed to get social settings" });
 	}
 };
