@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,10 @@ import {
 	Loader2,
 	AlertCircle,
 	CheckCircle2,
+	Upload,
+	Save,
+	Trash2,
+	FileText,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/useAuth";
@@ -20,6 +24,7 @@ import {
 	saveInstagramToken,
 	generateInstagramCaption,
 	publishToInstagram,
+	uploadImage,
 	SocialSettings,
 } from "@/services/api";
 import ImageLibrary from "@/components/admin/ImageLibrary";
@@ -31,20 +36,33 @@ declare global {
 	}
 }
 
+interface SocialDraft {
+	id: string;
+	idea: string;
+	caption: string;
+	imageUrl: string;
+	createdAt: string;
+}
+
 const ManageSocial = () => {
 	const { token } = useAuth();
 	const [settings, setSettings] = useState<SocialSettings | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isGenerating, setIsGenerating] = useState(false);
 	const [isPublishing, setIsPublishing] = useState(false);
+	const [isUploading, setIsUploading] = useState(false);
 
 	const [idea, setIdea] = useState("");
 	const [caption, setCaption] = useState("");
 	const [imageUrl, setImageUrl] = useState("");
+	const [drafts, setDrafts] = useState<SocialDraft[]>([]);
+
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		if (token) {
 			loadSettings();
+			loadDrafts();
 		}
 	}, [token]);
 
@@ -57,7 +75,6 @@ const ManageSocial = () => {
 
 		// Initialize Facebook SDK if we have the App ID
 		if (data?.appId) {
-			console.log("DEBUG: Inicializando FB com o ID:", data.appId);
 			const initFB = () => {
 				if (window.FB) {
 					window.FB.init({
@@ -66,7 +83,6 @@ const ManageSocial = () => {
 						xfbml: true,
 						version: "v21.0",
 					});
-					console.log("Facebook SDK Inicializado com sucesso!");
 				}
 			};
 
@@ -78,13 +94,81 @@ const ManageSocial = () => {
 		}
 	};
 
+	const loadDrafts = () => {
+		const saved = localStorage.getItem("instagram_drafts");
+		if (saved) {
+			try {
+				setDrafts(JSON.parse(saved));
+			} catch (e) {
+				console.error("Error loading drafts", e);
+			}
+		}
+	};
+
+	const saveDraft = () => {
+		if (!caption && !imageUrl && !idea) {
+			toast.error("Nada para salvar como rascunho!");
+			return;
+		}
+
+		const newDraft: SocialDraft = {
+			id: crypto.randomUUID(),
+			idea,
+			caption,
+			imageUrl,
+			createdAt: new Date().toISOString(),
+		};
+
+		const updatedDrafts = [newDraft, ...drafts];
+		setDrafts(updatedDrafts);
+		localStorage.setItem("instagram_drafts", JSON.stringify(updatedDrafts));
+		toast.success("Rascunho salvo!");
+	};
+
+	const loadDraftItem = (draft: SocialDraft) => {
+		setIdea(draft.idea);
+		setCaption(draft.caption);
+		setImageUrl(draft.imageUrl);
+		toast.info("Rascunho carregado");
+	};
+
+	const deleteDraft = (id: string, e: React.MouseEvent) => {
+		e.stopPropagation();
+		const updated = drafts.filter((d) => d.id !== id);
+		setDrafts(updated);
+		localStorage.setItem("instagram_drafts", JSON.stringify(updated));
+		toast.success("Rascunho removido");
+	};
+
+	const handleUploadClick = () => {
+		fileInputRef.current?.click();
+	};
+
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file || !token) return;
+
+		setIsUploading(true);
+		try {
+			const url = await uploadImage(file, token);
+			if (url) {
+				setImageUrl(url);
+				toast.success("Imagem enviada com sucesso!");
+			} else {
+				toast.error("Falha ao enviar imagem.");
+			}
+		} catch (error) {
+			toast.error("Erro no processamento da imagem.");
+		} finally {
+			setIsUploading(false);
+			if (fileInputRef.current) fileInputRef.current.value = "";
+		}
+	};
+
 	const handleFacebookLogin = () => {
 		if (!settings?.appId) {
 			toast.error(
 				"ID do Aplicativo não configurado no servidor (Railway).",
-			);
-			console.error(
-				"DEBUG: appId está ausente nas configurações recebidas.",
 			);
 			return;
 		}
@@ -182,7 +266,7 @@ const ManageSocial = () => {
 	}
 
 	return (
-		<div className="space-y-8 animate-in fade-in duration-500">
+		<div className="space-y-8 animate-in fade-in duration-500 pb-20">
 			<div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
 				<div>
 					<h1 className="text-4xl font-bold tracking-tight gradient-text mb-2">
@@ -241,7 +325,7 @@ const ManageSocial = () => {
 				{/* Editor Section */}
 				<div className="space-y-6">
 					<Card className="bg-[#14181F] border-white/5 overflow-hidden">
-						<CardHeader className="border-b border-white/5">
+						<CardHeader className="border-b border-white/5 flex flex-row items-center justify-between">
 							<CardTitle className="text-lg flex items-center gap-2">
 								<Sparkles
 									className="text-purple-400"
@@ -249,6 +333,15 @@ const ManageSocial = () => {
 								/>
 								Criar Novo Post
 							</CardTitle>
+							<Button
+								variant="ghost"
+								size="sm"
+								onClick={saveDraft}
+								className="text-slate-400 hover:text-white gap-2"
+							>
+								<Save size={16} />
+								Salvar Rascunho
+							</Button>
 						</CardHeader>
 						<CardContent className="p-6 space-y-6">
 							<div className="space-y-2">
@@ -305,20 +398,47 @@ const ManageSocial = () => {
 								<Label className="text-slate-400">
 									Imagem do Post
 								</Label>
-								<div className="flex gap-2">
-									<div className="relative flex-grow">
-										<Input
-											placeholder="URL da imagem (escolha na biblioteca)"
-											value={imageUrl}
-											onChange={(e) =>
-												setImageUrl(e.target.value)
-											}
-											className="bg-[#0B0E14] border-white/5 rounded-xl h-12"
+								<div className="flex flex-col gap-3">
+									<div className="flex gap-2">
+										<div className="relative flex-grow">
+											<Input
+												placeholder="URL da imagem..."
+												value={imageUrl}
+												onChange={(e) =>
+													setImageUrl(e.target.value)
+												}
+												className="bg-[#0B0E14] border-white/5 rounded-xl h-12"
+											/>
+										</div>
+										<Button
+											variant="outline"
+											onClick={handleUploadClick}
+											disabled={isUploading}
+											className="border-white/10 hover:bg-white/5 h-12 rounded-xl gap-2"
+										>
+											{isUploading ? (
+												<Loader2
+													size={18}
+													className="animate-spin"
+												/>
+											) : (
+												<Upload size={18} />
+											)}
+											Upload
+										</Button>
+										<input
+											type="file"
+											ref={fileInputRef}
+											onChange={handleFileChange}
+											className="hidden"
+											accept="image/*"
 										/>
 									</div>
-									<ImageLibrary
-										onSelect={(url) => setImageUrl(url)}
-									/>
+									<div className="flex justify-start">
+										<ImageLibrary
+											onSelect={(url) => setImageUrl(url)}
+										/>
+									</div>
 								</div>
 							</div>
 
@@ -348,9 +468,9 @@ const ManageSocial = () => {
 					</Card>
 				</div>
 
-				{/* Preview Section */}
+				{/* Preview Section & Drafts List */}
 				<div className="space-y-6">
-					<Card className="bg-[#14181F] border-white/5 overflow-hidden sticky top-24">
+					<Card className="bg-[#14181F] border-white/5 overflow-hidden">
 						<CardHeader className="border-b border-white/5">
 							<CardTitle className="text-lg flex items-center gap-2">
 								<Instagram
@@ -361,7 +481,7 @@ const ManageSocial = () => {
 							</CardTitle>
 						</CardHeader>
 						<CardContent className="p-0">
-							<div className="max-w-[400px] mx-auto bg-black border border-white/5 overflow-hidden shadow-2xl">
+							<div className="max-w-[400px] mx-auto bg-black border border-white/5 overflow-hidden shadow-2xl my-4">
 								{/* Header */}
 								<div className="p-3 flex items-center gap-3">
 									<div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-[2px]">
@@ -393,16 +513,16 @@ const ManageSocial = () => {
 								{/* Actions */}
 								<div className="p-3 text-white">
 									<div className="flex gap-4 mb-3">
-										<div className="w-6 h-6 border-2 border-white rounded-full" />
-										<div className="w-6 h-6 border-2 border-white rounded-full" />
-										<div className="w-6 h-6 border-2 border-white rounded-full" />
+										<div className="w-6 h-6 border-2 border-white rounded-full opacity-50" />
+										<div className="w-6 h-6 border-2 border-white rounded-full opacity-50" />
+										<div className="w-6 h-6 border-2 border-white rounded-full opacity-50" />
 									</div>
 									<div className="space-y-1">
 										<p className="text-xs font-bold">
 											128 curtidas
 										</p>
 										<div className="text-sm">
-											<span className="font-bold mr-2">
+											<span className="font-bold mr-2 text-white">
 												meusiteperfeito
 											</span>
 											<span className="whitespace-pre-line text-slate-200">
@@ -415,6 +535,63 @@ const ManageSocial = () => {
 							</div>
 						</CardContent>
 					</Card>
+
+					{/* Drafts List */}
+					{drafts.length > 0 && (
+						<Card className="bg-[#14181F] border-white/5 overflow-hidden">
+							<CardHeader className="border-b border-white/5 font-bold">
+								<CardTitle className="text-lg flex items-center gap-2">
+									<FileText
+										className="text-cyan-400"
+										size={20}
+									/>
+									Rascunhos Salvos
+								</CardTitle>
+							</CardHeader>
+							<CardContent className="p-4">
+								<div className="grid grid-cols-2 gap-4">
+									{drafts.slice(0, 4).map((draft) => (
+										<div
+											key={draft.id}
+											onClick={() => loadDraftItem(draft)}
+											className="group relative aspect-square bg-slate-900 rounded-lg overflow-hidden border border-white/5 cursor-pointer hover:border-cyan-400/50 transition-all"
+										>
+											{draft.imageUrl ? (
+												<img
+													src={draft.imageUrl}
+													className="w-full h-full object-cover"
+												/>
+											) : (
+												<div className="w-full h-full flex items-center justify-center text-slate-600">
+													Sem imagem
+												</div>
+											)}
+											<div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center p-4 transition-opacity">
+												<p className="text-xs text-white text-center line-clamp-2 mb-2 font-medium">
+													{draft.idea || "Sem ideia"}
+												</p>
+												<Button
+													variant="destructive"
+													size="icon"
+													className="h-8 w-8 rounded-full"
+													onClick={(e) =>
+														deleteDraft(draft.id, e)
+													}
+												>
+													<Trash2 size={14} />
+												</Button>
+											</div>
+										</div>
+									))}
+								</div>
+								{drafts.length > 4 && (
+									<p className="text-center text-xs text-slate-500 mt-4">
+										Exibindo os 4 rascunhos mais recentes
+									</p>
+								)}
+							</CardContent>
+						</Card>
+					)}
 				</div>
 			</div>
 		</div>
