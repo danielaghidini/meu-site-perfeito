@@ -153,13 +153,20 @@ export const publishToInstagram = async (req: Request, res: Response) => {
 				.json({ error: "Instagram account not linked" });
 		}
 
+		// Instagram requires JPEG. If it's a Cloudinary URL, we can force the format.
+		let transformedImageUrl = imageUrl;
+		if (imageUrl.includes("cloudinary.com")) {
+			// Replace the extension (last .xxx) with .jpg
+			transformedImageUrl = imageUrl.replace(/\.[^/.]+$/, "") + ".jpg";
+		}
+
 		// Step 1: Create media container
 		const containerUrl = `https://graph.facebook.com/v21.0/${igId}/media`;
 		const containerRes = await fetch(containerUrl, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				image_url: imageUrl,
+				image_url: transformedImageUrl,
 				caption: caption,
 				access_token: token,
 			}),
