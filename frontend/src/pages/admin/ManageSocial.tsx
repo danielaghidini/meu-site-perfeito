@@ -57,14 +57,23 @@ const ManageSocial = () => {
 
 		// Initialize Facebook SDK if we have the App ID
 		if (data?.appId) {
-			window.fbAsyncInit = function () {
-				window.FB.init({
-					appId: data.appId,
-					cookie: true,
-					xfbml: true,
-					version: "v21.0",
-				});
+			const initFB = () => {
+				if (window.FB) {
+					window.FB.init({
+						appId: data.appId,
+						cookie: true,
+						xfbml: true,
+						version: "v21.0",
+					});
+					console.log("Facebook SDK Inicializado com sucesso!");
+				}
 			};
+
+			if (window.FB) {
+				initFB();
+			} else {
+				window.fbAsyncInit = initFB;
+			}
 		}
 	};
 
