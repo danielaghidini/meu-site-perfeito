@@ -46,6 +46,12 @@ import {
 import { generateArticleContent } from "./controllers/aiController.js";
 import { getAllImages } from "./controllers/mediaController.js";
 import { getStats } from "./controllers/dashboardController.js";
+import {
+	getSocialSettings,
+	saveInstagramToken,
+	generateCaption,
+	publishToInstagram,
+} from "./controllers/socialController.js";
 import { upload } from "./middleware/upload.js";
 
 console.log("Starting server...");
@@ -208,6 +214,32 @@ app.post(
 	authenticateToken,
 	authorizeRole(["ADMIN"]),
 	generateArticleContent,
+);
+
+// --- SOCIAL MEDIA ---
+app.get(
+	"/api/social/settings",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	getSocialSettings,
+);
+app.post(
+	"/api/social/token",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	saveInstagramToken,
+);
+app.post(
+	"/api/social/caption",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	generateCaption,
+);
+app.post(
+	"/api/social/publish",
+	authenticateToken,
+	authorizeRole(["ADMIN"]),
+	publishToInstagram,
 );
 
 app.listen(port, () => {

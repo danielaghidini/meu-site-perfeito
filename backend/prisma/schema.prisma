@@ -9,20 +9,20 @@ datasource db {
 }
 
 model Article {
-  id           String   @id @default(uuid())
-  title        String
-  slug         String   @unique
-  content      String
-  excerpt      String?
-  coverUrl     String?  // Adicionado capa
-  isFeatured   Boolean  @default(false)
-  authorId     String?
-  published    Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  categoryId   String?
-  user         User?    @relation(fields: [authorId], references: [id])
-  category     Category? @relation(fields: [categoryId], references: [id])
+  id         String    @id @default(uuid())
+  title      String
+  slug       String    @unique
+  content    String
+  excerpt    String?
+  coverUrl   String?
+  isFeatured Boolean   @default(false)
+  authorId   String?
+  published  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  categoryId String?
+  user       User?     @relation(fields: [authorId], references: [id])
+  category   Category? @relation(fields: [categoryId], references: [id])
 }
 
 model Category {
@@ -39,7 +39,7 @@ model Project {
   description      String
   shortDescription String?
   coverUrl         String?
-  technologies     String?  // Ex: "React, Node"
+  technologies     String?
   liveUrl          String?
   repoUrl          String?
   isFeatured       Boolean  @default(false)
@@ -47,7 +47,6 @@ model Project {
   updatedAt        DateTime @updatedAt
 }
 
-// User e outros models auxiliares
 model User {
   id        String    @id @default(uuid())
   email     String    @unique
@@ -58,7 +57,6 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   articles  Article[]
-  // Outras relações mantidas para compatibilidade se quiser usar depois, ou simplificamos
 }
 
 model Contact {
@@ -69,7 +67,7 @@ model Contact {
   company   String?
   project   String
   message   String
-  status    String   @default("NEW") // NEW, READ, ARCHIVED
+  status    String   @default("NEW")
   createdAt DateTime @default(now())
 }
 
@@ -81,4 +79,10 @@ model AccessLog {
   userId    String?
   userAgent String?
   createdAt DateTime @default(now())
+}
+
+model Setting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
 }

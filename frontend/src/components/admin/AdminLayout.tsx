@@ -13,6 +13,7 @@ import {
 	Tags,
 	Menu,
 	X,
+	Instagram,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import {
@@ -62,6 +63,11 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 			label: "Blog",
 			icon: <FileText size={20} />,
 			path: "/painel/posts",
+		},
+		{
+			label: "Redes Sociais",
+			icon: <Instagram size={20} />,
+			path: "/painel/social",
 		},
 		{
 			label: "Categorias",
