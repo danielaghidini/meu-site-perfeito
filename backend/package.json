@@ -9,9 +9,9 @@
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
 		"import-dialogues": "node src/scripts/importDialogues.js",
-		"build": "prisma generate && prisma db push --accept-data-loss && tsc",
+		"build": "prisma generate && tsc",
 		"db:sync": "tsx src/scripts/sync-db.ts",
-		"start": "node dist/src/index.js",
+		"start": "prisma db push --accept-data-loss && node dist/src/index.js",
 		"seed": "tsx prisma/seed.ts",
 		"postinstall": "prisma generate"
 	},
